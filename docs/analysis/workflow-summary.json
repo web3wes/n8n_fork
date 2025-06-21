@@ -1,0 +1,145 @@
+{
+  "meta": {
+    "timestamp": "2025-06-21T18:04:10.461Z",
+    "analysisType": "workflow-structure"
+  },
+  "summary": {
+    "totalWorkflows": 10,
+    "totalNodes": 94,
+    "totalConnections": 84,
+    "commonPatterns": {
+      "triggers": [
+        "When clicking \"Execute Workflow\"",
+        "When clicking ‘Test workflow’"
+      ],
+      "actions": [
+        "Sample Data",
+        "Run Once for All Items",
+        "Run Once for All Items (Legacy Syntax)",
+        "Run Once for Each Item",
+        "Run Once for Each Item  (Legacy Syntax)",
+        "Crypto Hash into Hex",
+        "Crypto Hash into MD5",
+        "Crypto Sign data with RSA-MD5",
+        "Crypto Hmac data with MD5",
+        "Crypto Generate UUID",
+        "IF",
+        "No Operation, do nothing",
+        "Stop and Error",
+        "Read Binary Files",
+        "Crypto Hash Binary Data",
+        "Crypto Hmac Binary Data",
+        "Edit Fields",
+        "Convert to File",
+        "Convert to File1",
+        "Convert to File2",
+        "Convert to File3",
+        "Convert to File5",
+        "Extract From File",
+        "Extract From File1",
+        "Extract From File2",
+        "Extract From File3",
+        "Extract From File4",
+        "Convert to File6",
+        "Extract From File5",
+        "Edit Fields1",
+        "Convert to File7",
+        "Extract From File6",
+        "Convert to File8",
+        "Extract From File7",
+        "Convert to File9",
+        "Extract From File8",
+        "Convert to File10",
+        "Extract From File9",
+        "Edit Fields2",
+        "HTML",
+        "HTML2",
+        "HTML3",
+        "HTML1",
+        "HTML4",
+        "HTML5",
+        "HTML6",
+        "Code",
+        "No Operation, do nothing1",
+        "No Operation, do nothing2",
+        "No Operation, do nothing3",
+        "No Operation, do nothing4",
+        "No Operation, do nothing5",
+        "No Operation, do nothing6",
+        "Sign with claims",
+        "Sign with JSON Payload",
+        "Verify1",
+        "Decode2",
+        "Decode1",
+        "Verify2",
+        "Sign with kid",
+        "Decode1 Output",
+        "Verify1 Output",
+        "Decode2 Output",
+        "Verify2 Output",
+        "Decode3",
+        "Verify3",
+        "Decode3 Output",
+        "Verify3 Output",
+        "Read Binary File",
+        "Binary to JSON - No Set All Data",
+        "Binary to JSON",
+        "JSON to Binary",
+        "JSON to Binary - No Convert All Data",
+        "Binary to JSON - No Set All Data + Json Parse",
+        "Binary to JSON - No Set All Data + Encoding base64",
+        "Binary to JSON - Keep as Base64",
+        "BarChart",
+        "Doughnut",
+        "Read sample-encrypted.pdf",
+        "Read PDF (encrypted)"
+      ],
+      "transformations": [],
+      "helpers": []
+    },
+    "averageNodesPerWorkflow": 9,
+    "averageConnectionsPerWorkflow": 8,
+    "topNodeTypes": [
+      {
+        "type": "n8n-nodes-base.manualTrigger",
+        "count": 10
+      },
+      {
+        "type": "n8n-nodes-base.convertToFile",
+        "count": 10
+      },
+      {
+        "type": "n8n-nodes-base.extractFromFile",
+        "count": 10
+      },
+      {
+        "type": "n8n-nodes-base.set",
+        "count": 9
+      },
+      {
+        "type": "n8n-nodes-base.jwt",
+        "count": 9
+      },
+      {
+        "type": "n8n-nodes-base.noOp",
+        "count": 8
+      },
+      {
+        "type": "n8n-nodes-base.code",
+        "count": 7
+      },
+      {
+        "type": "n8n-nodes-base.crypto",
+        "count": 7
+      },
+      {
+        "type": "n8n-nodes-base.html",
+        "count": 7
+      },
+      {
+        "type": "n8n-nodes-base.moveBinaryData",
+        "count": 7
+      }
+    ]
+  }
+}

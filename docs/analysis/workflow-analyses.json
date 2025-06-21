@@ -1,0 +1,3376 @@
+[
+  {
+    "meta": {},
+    "nodeCount": 6,
+    "nodes": [
+      {
+        "id": "33eede8d-2ab0-42ab-b79a-a069d8549ab0",
+        "name": "When clicking \"Execute Workflow\"",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -40,
+          580
+        ],
+        "parameters": {},
+        "parameterCount": 0,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "a5913b52-24dc-4f81-bb7f-f90e61dad978",
+        "name": "Sample Data",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 1,
+        "position": [
+          200,
+          580
+        ],
+        "parameters": {
+          "jsCode": "return[\n  { value: 1 },\n  { value: 2 },\n]"
+        },
+        "parameterCount": 1,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "c4ad4913-5af3-42bc-a784-69182f1facdd",
+        "name": "Run Once for All Items",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 1,
+        "position": [
+          460,
+          320
+        ],
+        "parameters": {
+          "jsCode": "// Loop over input items and add a new field\n// called 'myNewField' to the JSON of each one\nlet sum = 0;\nfor (const item of $input.all()) {\n  sum += item.json.value;\n}\n\nreturn [ {sum} ];"
+        },
+        "parameterCount": 1,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "34cbd204-4335-4790-92cd-c3df617eee21",
+        "name": "Run Once for All Items (Legacy Syntax)",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 1,
+        "position": [
+          460,
+          500
+        ],
+        "parameters": {
+          "jsCode": "// Loop over input items and add a new field\n// called 'myNewField' to the JSON of each one\nlet sum = 0;\nfor (const item of items) {\n  sum += item.json.value;\n}\n\nreturn [ {sum} ];"
+        },
+        "parameterCount": 1,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "f67d29bf-554a-4572-8867-4456182dec24",
+        "name": "Run Once for Each Item",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 1,
+        "position": [
+          460,
+          680
+        ],
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "// Add a new field called 'myNewField' to the\n// JSON of the item\n$input.item.json.myNewField = $input.item.json.value;\n\nreturn $input.item;"
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "6f4bf149-e84e-4e0d-802a-7eaf7a42b18c",
+        "name": "Run Once for Each Item  (Legacy Syntax)",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 1,
+        "position": [
+          460,
+          860
+        ],
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "// Add a new field called 'myNewField' to the\n// JSON of the item\nitem.json.myNewField = item.json.value;\n\nreturn item;"
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      }
+    ],
+    "connections": {
+      "When clicking \"Execute Workflow\"": {
+        "main": [
+          [
+            {
+              "node": "Sample Data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Sample Data": {
+        "main": [
+          [
+            {
+              "node": "Run Once for All Items",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Run Once for Each Item",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Run Once for All Items (Legacy Syntax)",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Run Once for Each Item  (Legacy Syntax)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "connectionCount": 5,
+    "patterns": {
+      "triggers": [
+        "When clicking \"Execute Workflow\""
+      ],
+      "actions": [
+        "Sample Data",
+        "Run Once for All Items",
+        "Run Once for All Items (Legacy Syntax)",
+        "Run Once for Each Item",
+        "Run Once for Each Item  (Legacy Syntax)"
+      ],
+      "transformations": [],
+      "helpers": []
+    },
+    "dataFlow": [
+      {
+        "from": "When clicking \"Execute Workflow\"",
+        "to": "Sample Data",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Sample Data",
+        "to": "Run Once for All Items",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Sample Data",
+        "to": "Run Once for Each Item",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Sample Data",
+        "to": "Run Once for All Items (Legacy Syntax)",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Sample Data",
+        "to": "Run Once for Each Item  (Legacy Syntax)",
+        "type": "main",
+        "index": 0
+      }
+    ],
+    "sourceFile": "packages/nodes-base/nodes/Code/test/Code.workflow.json"
+  },
+  {
+    "meta": {
+      "instanceId": "104a4d08d8897b8bdeb38aaca515021075e0bd8544c983c2bb8c86e6a8e6081c"
+    },
+    "nodeCount": 12,
+    "nodes": [
+      {
+        "id": "78f64c0f-d6a7-47fb-920d-5471fcd8caa1",
+        "name": "When clicking \"Execute Workflow\"",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -480,
+          460
+        ],
+        "parameters": {},
+        "parameterCount": 0,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "90831322-8a73-40ac-ae52-84a6504d3d95",
+        "name": "Crypto Hash into Hex",
+        "type": "n8n-nodes-base.crypto",
+        "typeVersion": 1,
+        "position": [
+          360,
+          660
+        ],
+        "parameters": {
+          "value": "test"
+        },
+        "parameterCount": 1,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "9836f128-6798-498e-8752-ba447218ce21",
+        "name": "Crypto Hash into MD5",
+        "type": "n8n-nodes-base.crypto",
+        "typeVersion": 1,
+        "position": [
+          360,
+          500
+        ],
+        "parameters": {
+          "value": "test"
+        },
+        "parameterCount": 1,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "4ec3781a-433d-4b68-bc94-3fbe6ed55a0e",
+        "name": "Crypto Sign data with RSA-MD5",
+        "type": "n8n-nodes-base.crypto",
+        "typeVersion": 1,
+        "position": [
+          80,
+          860
+        ],
+        "parameters": {
+          "action": "sign",
+          "value": "test",
+          "algorithm": "RSA-MD5",
+          "encoding": "base64",
+          "privateKey": "-----BEGIN RSA PRIVATE KEY-----\nMIIBOgIBAAJBAKj34GkxFhD90vcNLYLInFEX6Ppy1tPf9Cnzj4p4WGeKLs1Pt8Qu\nKUpRKfFLfRYC9AIKjbJTWit+CqvjWYzvQwECAwEAAQJAIJLixBy2qpFoS4DSmoEm\no3qGy0t6z09AIJtH+5OeRV1be+N4cDYJKffGzDa88vQENZiRm0GRq6a+HPGQMd2k\nTQIhAKMSvzIBnni7ot/OSie2TmJLY4SwTQAevXysE2RbFDYdAiEBCUEaRQnMnbp7\n9mxDXDf6AU0cN/RPBjb9qSHDcWZHGzUCIG2Es59z8ugGrDY+pxLQnwfotadxd+Uy\nv/Ow5T0q5gIJAiEAyS4RaI9YG8EWx/2w0T67ZUVAw8eOMB6BIUg0Xcu+3okCIBOs\n/5OiPgoTdSy7bcF9IGpSE8ZgGKzgYQVZeN97YE00\n-----END RSA PRIVATE KEY-----"
+        },
+        "parameterCount": 5,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "797ba0d9-28e0-4494-bafd-d0603e85c303",
+        "name": "Crypto Hmac data with MD5",
+        "type": "n8n-nodes-base.crypto",
+        "typeVersion": 1,
+        "position": [
+          360,
+          320
+        ],
+        "parameters": {
+          "action": "hmac",
+          "value": "test",
+          "secret": "-----BEGIN RSA PRIVATE KEY-----|MIIBOgIBAAJBAKj34GkxFhD90vcNLYLInFEX6Ppy1tPf9Cnzj4p4WGeKLs1Pt8QuKUpRKfFLfRYC9AIKjbJTWit+CqvjWYzvQwECAwEAAQJAIJLixBy2qpFoS4DSmoEmo3qGy0t6z09AIJtH+5OeRV1be+N4cDYJKffGzDa88vQENZiRm0GRq6a+HPGQMd2kTQIhAKMSvzIBnni7ot/OSie2TmJLY4SwTQAevXysE2RbFDYdAiEBCUEaRQnMnbp79mxDXDf6AU0cN/RPBjb9qSHDcWZHGzUCIG2Es59z8ugGrDY+pxLQnwfotadxd+Uyv/Ow5T0q5gIJAiEAyS4RaI9YG8EWx/2w0T67ZUVAw8eOMB6BIUg0Xcu+3okCIBOs/5OiPgoTdSy7bcF9IGpSE8ZgGKzgYQVZeN97YE00-----END RSA PRIVATE KEY-----",
+          "encoding": "base64"
+        },
+        "parameterCount": 4,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "a6682d88-0842-4884-9869-220597ac3d2a",
+        "name": "Crypto Generate UUID",
+        "type": "n8n-nodes-base.crypto",
+        "typeVersion": 1,
+        "position": [
+          -160,
+          1060
+        ],
+        "parameters": {
+          "action": "generate"
+        },
+        "parameterCount": 1,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "89297cfb-e119-45b8-87b4-021a8272534b",
+        "name": "IF",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 1,
+        "position": [
+          80,
+          1060
+        ],
+        "parameters": {
+          "conditions": {
+            "string": [
+              {
+                "value1": "={{ $json.data }}",
+                "operation": "regex",
+                "value2": "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$"
+              }
+            ]
+          }
+        },
+        "parameterCount": 1,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "1954d932-2878-403d-ad16-373585dbe9cd",
+        "name": "No Operation, do nothing",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          420,
+          1040
+        ],
+        "parameters": {},
+        "parameterCount": 0,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "b1154e93-9d39-40c6-8ca6-aadc8103cfbd",
+        "name": "Stop and Error",
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          260,
+          1180
+        ],
+        "parameters": {
+          "errorMessage": "Not a valid uuid"
+        },
+        "parameterCount": 1,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "09bbc611-c2ca-4750-94a7-d1bb4fc53a57",
+        "name": "Read Binary Files",
+        "type": "n8n-nodes-base.readBinaryFiles",
+        "typeVersion": 1,
+        "position": [
+          -160,
+          40
+        ],
+        "parameters": {
+          "fileSelector": "/test/binary.data"
+        },
+        "parameterCount": 1,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "9f23080a-402d-4a82-821c-b74388cc9a26",
+        "name": "Crypto Hash Binary Data",
+        "type": "n8n-nodes-base.crypto",
+        "typeVersion": 1,
+        "position": [
+          200,
+          -80
+        ],
+        "parameters": {
+          "binaryData": true
+        },
+        "parameterCount": 1,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "43d5ffa2-9c95-4287-b582-b912071a05c1",
+        "name": "Crypto Hmac Binary Data",
+        "type": "n8n-nodes-base.crypto",
+        "typeVersion": 1,
+        "position": [
+          200,
+          100
+        ],
+        "parameters": {
+          "action": "hmac",
+          "binaryData": true,
+          "secret": "-----BEGIN RSA PRIVATE KEY-----|MIIBOgIBAAJBAKj34GkxFhD90vcNLYLInFEX6Ppy1tPf9Cnzj4p4WGeKLs1Pt8QuKUpRKfFLfRYC9AIKjbJTWit+CqvjWYzvQwECAwEAAQJAIJLixBy2qpFoS4DSmoEmo3qGy0t6z09AIJtH+5OeRV1be+N4cDYJKffGzDa88vQENZiRm0GRq6a+HPGQMd2kTQIhAKMSvzIBnni7ot/OSie2TmJLY4SwTQAevXysE2RbFDYdAiEBCUEaRQnMnbp79mxDXDf6AU0cN/RPBjb9qSHDcWZHGzUCIG2Es59z8ugGrDY+pxLQnwfotadxd+Uyv/Ow5T0q5gIJAiEAyS4RaI9YG8EWx/2w0T67ZUVAw8eOMB6BIUg0Xcu+3okCIBOs/5OiPgoTdSy7bcF9IGpSE8ZgGKzgYQVZeN97YE00-----END RSA PRIVATE KEY-----",
+          "encoding": "base64"
+        },
+        "parameterCount": 4,
+        "hasCredentials": false,
+        "disabled": false
+      }
+    ],
+    "connections": {
+      "When clicking \"Execute Workflow\"": {
+        "main": [
+          [
+            {
+              "node": "Crypto Hash into Hex",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Crypto Hash into MD5",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Crypto Sign data with RSA-MD5",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Crypto Hmac data with MD5",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Crypto Generate UUID",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Read Binary Files",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Crypto Generate UUID": {
+        "main": [
+          [
+            {
+              "node": "IF",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "IF": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Stop and Error",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "No Operation, do nothing": {
+        "main": [
+          []
+        ]
+      },
+      "Read Binary Files": {
+        "main": [
+          [
+            {
+              "node": "Crypto Hash Binary Data",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Crypto Hmac Binary Data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "connectionCount": 11,
+    "patterns": {
+      "triggers": [
+        "When clicking \"Execute Workflow\""
+      ],
+      "actions": [
+        "Crypto Hash into Hex",
+        "Crypto Hash into MD5",
+        "Crypto Sign data with RSA-MD5",
+        "Crypto Hmac data with MD5",
+        "Crypto Generate UUID",
+        "IF",
+        "No Operation, do nothing",
+        "Stop and Error",
+        "Read Binary Files",
+        "Crypto Hash Binary Data",
+        "Crypto Hmac Binary Data"
+      ],
+      "transformations": [],
+      "helpers": []
+    },
+    "dataFlow": [
+      {
+        "from": "When clicking \"Execute Workflow\"",
+        "to": "Crypto Hash into Hex",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "When clicking \"Execute Workflow\"",
+        "to": "Crypto Hash into MD5",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "When clicking \"Execute Workflow\"",
+        "to": "Crypto Sign data with RSA-MD5",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "When clicking \"Execute Workflow\"",
+        "to": "Crypto Hmac data with MD5",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "When clicking \"Execute Workflow\"",
+        "to": "Crypto Generate UUID",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "When clicking \"Execute Workflow\"",
+        "to": "Read Binary Files",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Crypto Generate UUID",
+        "to": "IF",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "IF",
+        "to": "No Operation, do nothing",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "IF",
+        "to": "Stop and Error",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Read Binary Files",
+        "to": "Crypto Hash Binary Data",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Read Binary Files",
+        "to": "Crypto Hmac Binary Data",
+        "type": "main",
+        "index": 0
+      }
+    ],
+    "sourceFile": "packages/nodes-base/nodes/Crypto/test/CryptoTest.workflow.json"
+  },
+  {
+    "meta": {
+      "instanceId": "b888bd11cd1ddbb95450babf3e199556799d999b896f650de768b8370ee50363"
+    },
+    "nodeCount": 24,
+    "nodes": [
+      {
+        "id": "35cce987-aa4f-4738-bfcd-b85098948341",
+        "name": "When clicking \"Execute Workflow\"",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          680,
+          1100
+        ],
+        "parameters": {},
+        "parameterCount": 0,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "13305747-c966-4f46-90b3-ffff6835b714",
+        "name": "Edit Fields",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.2,
+        "position": [
+          980,
+          880
+        ],
+        "parameters": {
+          "fields": {
+            "values": [
+              {
+                "name": "row_number",
+                "type": "numberValue",
+                "numberValue": "2"
+              },
+              {
+                "name": "country",
+                "stringValue": "uk"
+              },
+              {
+                "name": "browser",
+                "stringValue": "firefox"
+              },
+              {
+                "name": "session_duration",
+                "type": "numberValue",
+                "numberValue": "1"
+              },
+              {
+                "name": "visits",
+                "type": "numberValue",
+                "numberValue": "1"
+              }
+            ]
+          },
+          "include": "none",
+          "options": {}
+        },
+        "parameterCount": 3,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "b08b269d-0735-4dc4-b5a7-7870f5e115f9",
+        "name": "Convert to File",
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1,
+        "position": [
+          1380,
+          420
+        ],
+        "parameters": {
+          "options": {}
+        },
+        "parameterCount": 1,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "c68c209f-771f-4d25-b832-3d55ee97e6ff",
+        "name": "Convert to File1",
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1,
+        "position": [
+          1380,
+          600
+        ],
+        "parameters": {
+          "operation": "html",
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "2b6f27ed-a4dc-4a29-905f-f0a921ea6ee7",
+        "name": "Convert to File2",
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1,
+        "position": [
+          1380,
+          780
+        ],
+        "parameters": {
+          "operation": "toJson",
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "cd482d12-7547-4eb6-880b-bd2c31ef06d5",
+        "name": "Convert to File3",
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1,
+        "position": [
+          1380,
+          960
+        ],
+        "parameters": {
+          "operation": "toJson",
+          "mode": "each",
+          "options": {}
+        },
+        "parameterCount": 3,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "1fd693e3-4286-49f4-ba45-70584c1d67f7",
+        "name": "Convert to File5",
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1,
+        "position": [
+          1380,
+          1140
+        ],
+        "parameters": {
+          "operation": "xlsx",
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "636866e9-ca0d-44a3-b27a-90cf33e26485",
+        "name": "Extract From File",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          1600,
+          420
+        ],
+        "parameters": {
+          "options": {}
+        },
+        "parameterCount": 1,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "5c66b2ea-94b2-4a1b-a34d-acb07fe33e13",
+        "name": "Extract From File1",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          1600,
+          600
+        ],
+        "parameters": {
+          "operation": "html",
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "a03752f0-e3bb-4dd3-9aae-dc4d1471c281",
+        "name": "Extract From File2",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          1600,
+          780
+        ],
+        "parameters": {
+          "operation": "fromJson",
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "eb10c006-60d7-4842-b9e5-a364f42dd1ab",
+        "name": "Extract From File3",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          1600,
+          960
+        ],
+        "parameters": {
+          "operation": "fromJson",
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "64c98172-2a77-4e83-b19b-232899df8113",
+        "name": "Extract From File4",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          1600,
+          1140
+        ],
+        "parameters": {
+          "operation": "xlsx",
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "edbfd57e-d36b-470d-9e8d-9c7f67c131b4",
+        "name": "Convert to File6",
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1,
+        "position": [
+          1380,
+          1320
+        ],
+        "parameters": {
+          "operation": "xls",
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "86713806-8dc6-45ec-a710-e80b839ec193",
+        "name": "Extract From File5",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          1600,
+          1320
+        ],
+        "parameters": {
+          "operation": "xls",
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "c205d380-2459-4d16-bb56-f862c53c25de",
+        "name": "Edit Fields1",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.2,
+        "position": [
+          980,
+          1060
+        ],
+        "parameters": {
+          "fields": {
+            "values": [
+              {
+                "name": "base64",
+                "stringValue": "VGhpcyBpcyB0ZXh0IGNvbnZlcnRlZCB0byBiYXNlIDY0"
+              }
+            ]
+          },
+          "include": "none",
+          "options": {}
+        },
+        "parameterCount": 3,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "3f5fe04c-63cf-47d0-a7ca-d427b95a0c52",
+        "name": "Convert to File7",
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1,
+        "position": [
+          1380,
+          1880
+        ],
+        "parameters": {
+          "operation": "toBinary",
+          "sourceProperty": "base64",
+          "options": {}
+        },
+        "parameterCount": 3,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "dbb4eae0-f0ee-4453-aed7-7d8322974c94",
+        "name": "Extract From File6",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          1600,
+          1880
+        ],
+        "parameters": {
+          "operation": "text",
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "e3bf810d-7795-4663-82d1-768f76adc0d9",
+        "name": "Convert to File8",
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1,
+        "position": [
+          1380,
+          1520
+        ],
+        "parameters": {
+          "operation": "ods",
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "7713d273-2d51-4e3e-8ac9-9a4e6013c690",
+        "name": "Extract From File7",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          1600,
+          1520
+        ],
+        "parameters": {
+          "operation": "ods",
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "631b29cb-dcde-42cc-a514-45622923dab6",
+        "name": "Convert to File9",
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1,
+        "position": [
+          1380,
+          1700
+        ],
+        "parameters": {
+          "operation": "rtf",
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "168b6586-c89d-4b0e-880e-4ddb8ea7cb2f",
+        "name": "Extract From File8",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          1600,
+          1700
+        ],
+        "parameters": {
+          "operation": "rtf",
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "2ba4acd9-2677-4b25-9379-48433ac5e9cc",
+        "name": "Convert to File10",
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1,
+        "position": [
+          1380,
+          2100
+        ],
+        "parameters": {
+          "operation": "iCal",
+          "start": "2024-01-03T00:00:00",
+          "end": "2024-01-04T00:00:00",
+          "allDay": true,
+          "additionalFields": {
+            "description": "event description"
+          }
+        },
+        "parameterCount": 5,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "c0179d40-7de0-4e42-a6bf-97c5bb764665",
+        "name": "Extract From File9",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          1600,
+          2100
+        ],
+        "parameters": {
+          "operation": "fromIcs",
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "8ee98090-f3b0-41d5-8122-d27e5559738f",
+        "name": "Edit Fields2",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.2,
+        "position": [
+          1820,
+          2100
+        ],
+        "parameters": {
+          "fields": {
+            "values": [
+              {
+                "name": "description",
+                "stringValue": "={{ $json.data.events[0].description }}"
+              }
+            ]
+          },
+          "include": "none",
+          "options": {}
+        },
+        "parameterCount": 3,
+        "hasCredentials": false,
+        "disabled": false
+      }
+    ],
+    "connections": {
+      "When clicking \"Execute Workflow\"": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Edit Fields1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Convert to File10",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Convert to File",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Convert to File1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Convert to File2",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Convert to File3",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Convert to File5",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Convert to File6",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Convert to File8",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Convert to File9",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convert to File": {
+        "main": [
+          [
+            {
+              "node": "Extract From File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convert to File1": {
+        "main": [
+          [
+            {
+              "node": "Extract From File1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convert to File2": {
+        "main": [
+          [
+            {
+              "node": "Extract From File2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convert to File3": {
+        "main": [
+          [
+            {
+              "node": "Extract From File3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convert to File5": {
+        "main": [
+          [
+            {
+              "node": "Extract From File4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convert to File6": {
+        "main": [
+          [
+            {
+              "node": "Extract From File5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convert to File7": {
+        "main": [
+          [
+            {
+              "node": "Extract From File6",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields1": {
+        "main": [
+          [
+            {
+              "node": "Convert to File7",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convert to File8": {
+        "main": [
+          [
+            {
+              "node": "Extract From File7",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convert to File9": {
+        "main": [
+          [
+            {
+              "node": "Extract From File8",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convert to File10": {
+        "main": [
+          [
+            {
+              "node": "Extract From File9",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract From File9": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "connectionCount": 23,
+    "patterns": {
+      "triggers": [
+        "When clicking \"Execute Workflow\""
+      ],
+      "actions": [
+        "Edit Fields",
+        "Convert to File",
+        "Convert to File1",
+        "Convert to File2",
+        "Convert to File3",
+        "Convert to File5",
+        "Extract From File",
+        "Extract From File1",
+        "Extract From File2",
+        "Extract From File3",
+        "Extract From File4",
+        "Convert to File6",
+        "Extract From File5",
+        "Edit Fields1",
+        "Convert to File7",
+        "Extract From File6",
+        "Convert to File8",
+        "Extract From File7",
+        "Convert to File9",
+        "Extract From File8",
+        "Convert to File10",
+        "Extract From File9",
+        "Edit Fields2"
+      ],
+      "transformations": [],
+      "helpers": []
+    },
+    "dataFlow": [
+      {
+        "from": "When clicking \"Execute Workflow\"",
+        "to": "Edit Fields",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "When clicking \"Execute Workflow\"",
+        "to": "Edit Fields1",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "When clicking \"Execute Workflow\"",
+        "to": "Convert to File10",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Edit Fields",
+        "to": "Convert to File",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Edit Fields",
+        "to": "Convert to File1",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Edit Fields",
+        "to": "Convert to File2",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Edit Fields",
+        "to": "Convert to File3",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Edit Fields",
+        "to": "Convert to File5",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Edit Fields",
+        "to": "Convert to File6",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Edit Fields",
+        "to": "Convert to File8",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Edit Fields",
+        "to": "Convert to File9",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Convert to File",
+        "to": "Extract From File",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Convert to File1",
+        "to": "Extract From File1",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Convert to File2",
+        "to": "Extract From File2",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Convert to File3",
+        "to": "Extract From File3",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Convert to File5",
+        "to": "Extract From File4",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Convert to File6",
+        "to": "Extract From File5",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Convert to File7",
+        "to": "Extract From File6",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Edit Fields1",
+        "to": "Convert to File7",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Convert to File8",
+        "to": "Extract From File7",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Convert to File9",
+        "to": "Extract From File8",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Convert to File10",
+        "to": "Extract From File9",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Extract From File9",
+        "to": "Edit Fields2",
+        "type": "main",
+        "index": 0
+      }
+    ],
+    "sourceFile": "packages/nodes-base/nodes/Files/test/convert_extract.workflow.json"
+  },
+  {
+    "meta": {
+      "templateCredsSetupCompleted": true,
+      "instanceId": "be251a83c052a9862eeac953816fbb1464f89dfbf79d7ac490a8e336a8cc8bfd"
+    },
+    "nodeCount": 16,
+    "nodes": [
+      {
+        "id": "b421815f-bbeb-480d-a759-6a0360a050b6",
+        "name": "When clicking \"Execute Workflow\"",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          480,
+          780
+        ],
+        "parameters": {},
+        "parameterCount": 0,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "73ed18ec-3a26-4300-b917-240faa810a33",
+        "name": "HTML",
+        "type": "n8n-nodes-base.html",
+        "typeVersion": 1.2,
+        "position": [
+          1280,
+          260
+        ],
+        "parameters": {
+          "operation": "extractHtmlContent",
+          "extractionValues": {
+            "values": [
+              {
+                "key": "data",
+                "cssSelector": "html"
+              }
+            ]
+          },
+          "options": {
+            "cleanUpText": true
+          }
+        },
+        "parameterCount": 3,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "d8eaf4c4-be91-43ba-b5ff-efcc7ece60b0",
+        "name": "HTML2",
+        "type": "n8n-nodes-base.html",
+        "typeVersion": 1.2,
+        "position": [
+          1280,
+          600
+        ],
+        "parameters": {
+          "operation": "extractHtmlContent",
+          "extractionValues": {
+            "values": [
+              {
+                "key": "data",
+                "cssSelector": "html",
+                "skipSelectors": "img, a"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "parameterCount": 3,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "145a5168-69fd-49bd-a2a0-07841854937c",
+        "name": "HTML3",
+        "type": "n8n-nodes-base.html",
+        "typeVersion": 1.2,
+        "position": [
+          1280,
+          760
+        ],
+        "parameters": {
+          "operation": "extractHtmlContent",
+          "extractionValues": {
+            "values": [
+              {
+                "key": "data",
+                "cssSelector": "p",
+                "returnArray": true
+              }
+            ]
+          },
+          "options": {}
+        },
+        "parameterCount": 3,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "7a370ce9-e4c4-46e0-89a4-881a6c8a7019",
+        "name": "HTML1",
+        "type": "n8n-nodes-base.html",
+        "typeVersion": 1.2,
+        "position": [
+          1280,
+          420
+        ],
+        "parameters": {
+          "operation": "extractHtmlContent",
+          "extractionValues": {
+            "values": [
+              {
+                "key": "data",
+                "cssSelector": "=html"
+              }
+            ]
+          },
+          "options": {
+            "trimValues": true
+          }
+        },
+        "parameterCount": 3,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "64c9005d-f9fe-457e-8e24-f1c59e76aeae",
+        "name": "HTML4",
+        "type": "n8n-nodes-base.html",
+        "typeVersion": 1.2,
+        "position": [
+          1280,
+          940
+        ],
+        "parameters": {
+          "operation": "extractHtmlContent",
+          "extractionValues": {
+            "values": [
+              {
+                "key": "data",
+                "cssSelector": "div",
+                "returnValue": "attribute"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "parameterCount": 3,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "eef6b477-2c28-4c20-884f-93bbd48f9d0d",
+        "name": "HTML5",
+        "type": "n8n-nodes-base.html",
+        "typeVersion": 1.2,
+        "position": [
+          1280,
+          1120
+        ],
+        "parameters": {
+          "operation": "extractHtmlContent",
+          "extractionValues": {
+            "values": [
+              {
+                "key": "data",
+                "cssSelector": "body",
+                "returnValue": "html"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "parameterCount": 3,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "a548e5e3-0dcd-4f52-a581-bd046ef325b3",
+        "name": "HTML6",
+        "type": "n8n-nodes-base.html",
+        "typeVersion": 1.2,
+        "position": [
+          1280,
+          1280
+        ],
+        "parameters": {
+          "operation": "extractHtmlContent",
+          "extractionValues": {
+            "values": [
+              {
+                "key": "data",
+                "cssSelector": "#text-id",
+                "returnValue": "value"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "parameterCount": 3,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "ed46f03d-6cde-4225-beab-fdbe82bf095f",
+        "name": "Code",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          780,
+          740
+        ],
+        "parameters": {
+          "jsCode": "return {\n  data: `<html>\n<head>\n\t<title>My Page</title>\t\n</head>\n<body>\n\t<h1>My Page</h1>\n\t<p>Hello World</p>\n\t<div class=\"content\">\n\t\t<p>Another paragraph\\n</p>\n\t\t<p>Yet \\r\\n\\r\\n\\t\\t\\t\\t\\t\\t\\another paragraph\\n</p>\n\t\t<p>And\\one more\\n</p>\n\t</div>\n\t<img src=\"https://n8n.io/n8n-logo.png\" alt=\"n8n.io logo\" />\n\t<a href=\"https://n8n.io\">n8n.io</a>\n    <input id=\"text-id\" type=\"text\" value=\"n8n\" />\n</body>\n</html>`\n};"
+        },
+        "parameterCount": 1,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "9d4c07df-3348-4b0e-b144-dfb038bddb99",
+        "name": "No Operation, do nothing",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1500,
+          260
+        ],
+        "parameters": {},
+        "parameterCount": 0,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "0dd56421-7e3a-4908-a933-c4e09de6b7d5",
+        "name": "No Operation, do nothing1",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1580,
+          620
+        ],
+        "parameters": {},
+        "parameterCount": 0,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "15c21267-b4b7-4805-ad40-32060400fcef",
+        "name": "No Operation, do nothing2",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1600,
+          780
+        ],
+        "parameters": {},
+        "parameterCount": 0,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "d6fd1d78-e24b-4237-bd66-620130f0e5fc",
+        "name": "No Operation, do nothing3",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1640,
+          1140
+        ],
+        "parameters": {},
+        "parameterCount": 0,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "f8b7457b-7b46-4af6-958c-ad770f29e587",
+        "name": "No Operation, do nothing4",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1560,
+          960
+        ],
+        "parameters": {},
+        "parameterCount": 0,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "f509b012-78ea-4e14-9ee4-ebdd562efe3e",
+        "name": "No Operation, do nothing5",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1560,
+          420
+        ],
+        "parameters": {},
+        "parameterCount": 0,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "173f20fb-80aa-42d1-97b1-fc7a751fbedd",
+        "name": "No Operation, do nothing6",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1580,
+          1300
+        ],
+        "parameters": {},
+        "parameterCount": 0,
+        "hasCredentials": false,
+        "disabled": false
+      }
+    ],
+    "connections": {
+      "When clicking \"Execute Workflow\"": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "HTML",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "HTML1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "HTML2",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "HTML3",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "HTML4",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "HTML5",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "HTML6",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTML": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTML6": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing6",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTML5": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTML4": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTML3": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTML2": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTML1": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "connectionCount": 15,
+    "patterns": {
+      "triggers": [
+        "When clicking \"Execute Workflow\""
+      ],
+      "actions": [
+        "HTML",
+        "HTML2",
+        "HTML3",
+        "HTML1",
+        "HTML4",
+        "HTML5",
+        "HTML6",
+        "Code",
+        "No Operation, do nothing",
+        "No Operation, do nothing1",
+        "No Operation, do nothing2",
+        "No Operation, do nothing3",
+        "No Operation, do nothing4",
+        "No Operation, do nothing5",
+        "No Operation, do nothing6"
+      ],
+      "transformations": [],
+      "helpers": []
+    },
+    "dataFlow": [
+      {
+        "from": "When clicking \"Execute Workflow\"",
+        "to": "Code",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Code",
+        "to": "HTML",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Code",
+        "to": "HTML1",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Code",
+        "to": "HTML2",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Code",
+        "to": "HTML3",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Code",
+        "to": "HTML4",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Code",
+        "to": "HTML5",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Code",
+        "to": "HTML6",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "HTML",
+        "to": "No Operation, do nothing",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "HTML6",
+        "to": "No Operation, do nothing6",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "HTML5",
+        "to": "No Operation, do nothing3",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "HTML4",
+        "to": "No Operation, do nothing4",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "HTML3",
+        "to": "No Operation, do nothing2",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "HTML2",
+        "to": "No Operation, do nothing1",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "HTML1",
+        "to": "No Operation, do nothing5",
+        "type": "main",
+        "index": 0
+      }
+    ],
+    "sourceFile": "packages/nodes-base/nodes/Html/test/extractHtmlContent.workflow.json"
+  },
+  {
+    "meta": {},
+    "nodeCount": 16,
+    "nodes": [
+      {
+        "id": "66c858d2-822e-4177-a379-d5e2aef9f6da",
+        "name": "When clicking ‘Test workflow’",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -260,
+          840
+        ],
+        "parameters": {},
+        "parameterCount": 0,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "675b43b8-f079-4bcf-8ea2-52c3c60a3a42",
+        "name": "Sign with claims",
+        "type": "n8n-nodes-base.jwt",
+        "typeVersion": 1,
+        "position": [
+          120,
+          400
+        ],
+        "parameters": {
+          "claims": {
+            "audience": "test",
+            "issuer": "test",
+            "jwtid": "123",
+            "subject": "test"
+          },
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": true,
+        "disabled": false
+      },
+      {
+        "id": "c24f27d7-48fc-47c3-864d-f05456abe7c2",
+        "name": "Sign with JSON Payload",
+        "type": "n8n-nodes-base.jwt",
+        "typeVersion": 1,
+        "position": [
+          120,
+          840
+        ],
+        "parameters": {
+          "useJson": true,
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": true,
+        "disabled": false
+      },
+      {
+        "id": "ff74f160-8f43-4cd1-a089-4698713ea12d",
+        "name": "Verify1",
+        "type": "n8n-nodes-base.jwt",
+        "typeVersion": 1,
+        "position": [
+          380,
+          480
+        ],
+        "parameters": {
+          "operation": "verify",
+          "token": "={{ $json.token }}",
+          "options": {
+            "complete": true,
+            "ignoreExpiration": true,
+            "ignoreNotBefore": true
+          }
+        },
+        "parameterCount": 3,
+        "hasCredentials": true,
+        "disabled": false
+      },
+      {
+        "id": "9fcb58bd-f28b-4106-a3ab-ad2a64b6b0f5",
+        "name": "Decode2",
+        "type": "n8n-nodes-base.jwt",
+        "typeVersion": 1,
+        "position": [
+          380,
+          740
+        ],
+        "parameters": {
+          "operation": "decode",
+          "token": "={{ $json.token }}",
+          "options": {}
+        },
+        "parameterCount": 3,
+        "hasCredentials": true,
+        "disabled": false
+      },
+      {
+        "id": "913e5542-12a0-4a48-9646-4fba648ec95b",
+        "name": "Decode1",
+        "type": "n8n-nodes-base.jwt",
+        "typeVersion": 1,
+        "position": [
+          380,
+          300
+        ],
+        "parameters": {
+          "operation": "decode",
+          "token": "={{ $json.token }}",
+          "options": {}
+        },
+        "parameterCount": 3,
+        "hasCredentials": true,
+        "disabled": false
+      },
+      {
+        "id": "c888549a-b1fb-47e8-bf90-07cec2b32483",
+        "name": "Verify2",
+        "type": "n8n-nodes-base.jwt",
+        "typeVersion": 1,
+        "position": [
+          380,
+          920
+        ],
+        "parameters": {
+          "operation": "verify",
+          "token": "={{ $json.token }}",
+          "options": {}
+        },
+        "parameterCount": 3,
+        "hasCredentials": true,
+        "disabled": false
+      },
+      {
+        "id": "3aedaf15-026d-4874-99c1-ab5940f18c73",
+        "name": "Sign with kid",
+        "type": "n8n-nodes-base.jwt",
+        "typeVersion": 1,
+        "position": [
+          120,
+          1280
+        ],
+        "parameters": {
+          "claims": {
+            "audience": "test",
+            "issuer": "test",
+            "jwtid": "123",
+            "subject": "test"
+          },
+          "options": {
+            "kid": "custom-kid"
+          }
+        },
+        "parameterCount": 2,
+        "hasCredentials": true,
+        "disabled": false
+      },
+      {
+        "id": "9d8471ca-b918-4450-b2e3-735799399d39",
+        "name": "Decode1 Output",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.3,
+        "position": [
+          580,
+          300
+        ],
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "1289f607-d46f-45f5-953a-1492f3b50bbd",
+                "name": "payload.audience",
+                "value": "={{ $json.payload.audience }}",
+                "type": "string"
+              },
+              {
+                "id": "e32ae71b-62ca-45e5-8351-2fd9ab7451ef",
+                "name": "payload.jwtid",
+                "value": "={{ $json.payload.jwtid }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "dd0aa97d-a485-4cc3-a8af-55e73fb21716",
+        "name": "Verify1 Output",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.3,
+        "position": [
+          580,
+          480
+        ],
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "3ff845d5-9c2c-4744-bc33-a7318b4741fc",
+                "name": "payload.audience",
+                "value": "={{ $json.payload.audience }}",
+                "type": "string"
+              },
+              {
+                "id": "d1206579-634e-472a-9190-a176cf2477a1",
+                "name": "payload.jwtid",
+                "value": "={{ $json.payload.jwtid }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "f47b9996-ce95-4b72-a9ae-5e5a616ff982",
+        "name": "Decode2 Output",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.3,
+        "position": [
+          580,
+          740
+        ],
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "fe90f817-1b89-409c-992c-e42070fc67bf",
+                "name": "payload.my_field_1",
+                "value": "={{ $json.payload.my_field_1 }}",
+                "type": "string"
+              },
+              {
+                "id": "1b80e8b3-3004-4959-8c6c-0d36176579ea",
+                "name": "payload.my_field_2",
+                "value": "={{ $json.payload.my_field_2 }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "5ba29142-407f-4e39-a3ed-28dff742070a",
+        "name": "Verify2 Output",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.3,
+        "position": [
+          580,
+          920
+        ],
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "46ed5c03-d41a-4387-988e-2ed3821f32d4",
+                "name": "payload.my_field_1",
+                "value": "={{ $json.payload.my_field_1 }}",
+                "type": "string"
+              },
+              {
+                "id": "0007786e-3f93-4146-8e10-32ab8e088b81",
+                "name": "payload.my_field_2",
+                "value": "={{ $json.payload.my_field_2 }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "ab038c41-45eb-4679-a71d-fc3c60797983",
+        "name": "Decode3",
+        "type": "n8n-nodes-base.jwt",
+        "typeVersion": 1,
+        "position": [
+          380,
+          1180
+        ],
+        "parameters": {
+          "operation": "decode",
+          "token": "={{ $json.token }}",
+          "options": {
+            "complete": true
+          }
+        },
+        "parameterCount": 3,
+        "hasCredentials": true,
+        "disabled": false
+      },
+      {
+        "id": "3442124e-af80-4cb0-bae0-4716f5a367af",
+        "name": "Verify3",
+        "type": "n8n-nodes-base.jwt",
+        "typeVersion": 1,
+        "position": [
+          380,
+          1360
+        ],
+        "parameters": {
+          "operation": "verify",
+          "token": "={{ $json.token }}",
+          "options": {
+            "complete": true
+          }
+        },
+        "parameterCount": 3,
+        "hasCredentials": true,
+        "disabled": false
+      },
+      {
+        "id": "28786e3b-9f7b-42e1-b5d2-b5484870b51a",
+        "name": "Decode3 Output",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.3,
+        "position": [
+          580,
+          1180
+        ],
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "1289f607-d46f-45f5-953a-1492f3b50bbd",
+                "name": "payload.audience",
+                "value": "={{ $json.payload.audience }}",
+                "type": "string"
+              },
+              {
+                "id": "e32ae71b-62ca-45e5-8351-2fd9ab7451ef",
+                "name": "payload.jwtid",
+                "value": "={{ $json.payload.jwtid }}",
+                "type": "string"
+              },
+              {
+                "id": "99695f75-e483-4e12-8316-b669f73a7dfe",
+                "name": "header.kid",
+                "value": "={{ $json.header.kid }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "3a4dbfb1-4d3c-479c-a848-a8c3e148b4ab",
+        "name": "Verify3 Output",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.3,
+        "position": [
+          580,
+          1360
+        ],
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "3ff845d5-9c2c-4744-bc33-a7318b4741fc",
+                "name": "payload.audience",
+                "value": "={{ $json.payload.audience }}",
+                "type": "string"
+              },
+              {
+                "id": "d1206579-634e-472a-9190-a176cf2477a1",
+                "name": "payload.jwtid",
+                "value": "={{ $json.payload.jwtid }}",
+                "type": "string"
+              },
+              {
+                "id": "1d39fe9e-d513-4bcf-8f2e-3bce3b45e37b",
+                "name": "header.kid",
+                "value": "={{ $json.header.kid }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      }
+    ],
+    "connections": {
+      "When clicking ‘Test workflow’": {
+        "main": [
+          [
+            {
+              "node": "Sign with claims",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Sign with JSON Payload",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Sign with kid",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Sign with claims": {
+        "main": [
+          [
+            {
+              "node": "Decode1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Verify1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Sign with JSON Payload": {
+        "main": [
+          [
+            {
+              "node": "Decode2",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Verify2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Verify1": {
+        "main": [
+          [
+            {
+              "node": "Verify1 Output",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Decode2": {
+        "main": [
+          [
+            {
+              "node": "Decode2 Output",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Decode1": {
+        "main": [
+          [
+            {
+              "node": "Decode1 Output",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Verify2": {
+        "main": [
+          [
+            {
+              "node": "Verify2 Output",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Sign with kid": {
+        "main": [
+          [
+            {
+              "node": "Decode3",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Verify3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Decode3": {
+        "main": [
+          [
+            {
+              "node": "Decode3 Output",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Verify3": {
+        "main": [
+          [
+            {
+              "node": "Verify3 Output",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "connectionCount": 15,
+    "patterns": {
+      "triggers": [
+        "When clicking ‘Test workflow’"
+      ],
+      "actions": [
+        "Sign with claims",
+        "Sign with JSON Payload",
+        "Verify1",
+        "Decode2",
+        "Decode1",
+        "Verify2",
+        "Sign with kid",
+        "Decode1 Output",
+        "Verify1 Output",
+        "Decode2 Output",
+        "Verify2 Output",
+        "Decode3",
+        "Verify3",
+        "Decode3 Output",
+        "Verify3 Output"
+      ],
+      "transformations": [],
+      "helpers": []
+    },
+    "dataFlow": [
+      {
+        "from": "When clicking ‘Test workflow’",
+        "to": "Sign with claims",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "When clicking ‘Test workflow’",
+        "to": "Sign with JSON Payload",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "When clicking ‘Test workflow’",
+        "to": "Sign with kid",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Sign with claims",
+        "to": "Decode1",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Sign with claims",
+        "to": "Verify1",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Sign with JSON Payload",
+        "to": "Decode2",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Sign with JSON Payload",
+        "to": "Verify2",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Verify1",
+        "to": "Verify1 Output",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Decode2",
+        "to": "Decode2 Output",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Decode1",
+        "to": "Decode1 Output",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Verify2",
+        "to": "Verify2 Output",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Sign with kid",
+        "to": "Decode3",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Sign with kid",
+        "to": "Verify3",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Decode3",
+        "to": "Decode3 Output",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Verify3",
+        "to": "Verify3 Output",
+        "type": "main",
+        "index": 0
+      }
+    ],
+    "sourceFile": "packages/nodes-base/nodes/Jwt/test/jwt.workflow.json"
+  },
+  {
+    "meta": {
+      "instanceId": "104a4d08d8897b8bdeb38aaca515021075e0bd8544c983c2bb8c86e6a8e6081c"
+    },
+    "nodeCount": 9,
+    "nodes": [
+      {
+        "id": "f1789069-98a9-44ad-8e72-6b5c4a000f51",
+        "name": "When clicking \"Execute Workflow\"",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          1120
+        ],
+        "parameters": {},
+        "parameterCount": 0,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "ef780d51-664d-4d8a-b0c1-43fe63921e82",
+        "name": "Read Binary File",
+        "type": "n8n-nodes-base.readBinaryFile",
+        "typeVersion": 1,
+        "position": [
+          220,
+          1120
+        ],
+        "parameters": {
+          "filePath": "C:\\Test\\sample.json"
+        },
+        "parameterCount": 1,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "1dfba9d4-dc39-4693-9411-405e423b8da8",
+        "name": "Binary to JSON - No Set All Data",
+        "type": "n8n-nodes-base.moveBinaryData",
+        "typeVersion": 1,
+        "position": [
+          440,
+          1120
+        ],
+        "parameters": {
+          "setAllData": false,
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "b745f52d-3a5f-4f42-b3d0-e303d3aded4c",
+        "name": "Binary to JSON",
+        "type": "n8n-nodes-base.moveBinaryData",
+        "typeVersion": 1,
+        "position": [
+          440,
+          920
+        ],
+        "parameters": {
+          "options": {}
+        },
+        "parameterCount": 1,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "fb1bbc87-8b6c-4889-a376-760dbb8a090e",
+        "name": "JSON to Binary",
+        "type": "n8n-nodes-base.moveBinaryData",
+        "typeVersion": 1,
+        "position": [
+          740,
+          780
+        ],
+        "parameters": {
+          "mode": "jsonToBinary",
+          "options": {}
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "34ff0af3-fd2d-4b26-9e92-176f1aaff11a",
+        "name": "JSON to Binary - No Convert All Data",
+        "type": "n8n-nodes-base.moveBinaryData",
+        "typeVersion": 1,
+        "position": [
+          740,
+          1020
+        ],
+        "parameters": {
+          "mode": "jsonToBinary",
+          "convertAllData": false,
+          "sourceKey": "title",
+          "options": {
+            "fileName": "example.json"
+          }
+        },
+        "parameterCount": 4,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "b2c37763-801b-497f-b7d8-4c30b7e108e7",
+        "name": "Binary to JSON - No Set All Data + Json Parse",
+        "type": "n8n-nodes-base.moveBinaryData",
+        "typeVersion": 1,
+        "position": [
+          440,
+          1340
+        ],
+        "parameters": {
+          "setAllData": false,
+          "options": {
+            "jsonParse": true
+          }
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "b2125e40-9cd6-4730-b243-30aa565a42ee",
+        "name": "Binary to JSON - No Set All Data + Encoding base64",
+        "type": "n8n-nodes-base.moveBinaryData",
+        "typeVersion": 1,
+        "position": [
+          440,
+          1560
+        ],
+        "parameters": {
+          "setAllData": false,
+          "options": {
+            "encoding": "base64"
+          }
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "30b27ae6-29e1-43c6-be10-1f17cb3ade8a",
+        "name": "Binary to JSON - Keep as Base64",
+        "type": "n8n-nodes-base.moveBinaryData",
+        "typeVersion": 1,
+        "position": [
+          440,
+          1780
+        ],
+        "parameters": {
+          "setAllData": false,
+          "options": {
+            "keepAsBase64": true
+          }
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      }
+    ],
+    "connections": {
+      "When clicking \"Execute Workflow\"": {
+        "main": [
+          [
+            {
+              "node": "Read Binary File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Read Binary File": {
+        "main": [
+          [
+            {
+              "node": "Binary to JSON",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Binary to JSON - No Set All Data",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Binary to JSON - No Set All Data + Json Parse",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Binary to JSON - No Set All Data + Encoding base64",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Binary to JSON - Keep as Base64",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Binary to JSON": {
+        "main": [
+          [
+            {
+              "node": "JSON to Binary",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "JSON to Binary - No Convert All Data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "connectionCount": 8,
+    "patterns": {
+      "triggers": [
+        "When clicking \"Execute Workflow\""
+      ],
+      "actions": [
+        "Read Binary File",
+        "Binary to JSON - No Set All Data",
+        "Binary to JSON",
+        "JSON to Binary",
+        "JSON to Binary - No Convert All Data",
+        "Binary to JSON - No Set All Data + Json Parse",
+        "Binary to JSON - No Set All Data + Encoding base64",
+        "Binary to JSON - Keep as Base64"
+      ],
+      "transformations": [],
+      "helpers": []
+    },
+    "dataFlow": [
+      {
+        "from": "When clicking \"Execute Workflow\"",
+        "to": "Read Binary File",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Read Binary File",
+        "to": "Binary to JSON",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Read Binary File",
+        "to": "Binary to JSON - No Set All Data",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Read Binary File",
+        "to": "Binary to JSON - No Set All Data + Json Parse",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Read Binary File",
+        "to": "Binary to JSON - No Set All Data + Encoding base64",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Read Binary File",
+        "to": "Binary to JSON - Keep as Base64",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Binary to JSON",
+        "to": "JSON to Binary",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Binary to JSON",
+        "to": "JSON to Binary - No Convert All Data",
+        "type": "main",
+        "index": 0
+      }
+    ],
+    "sourceFile": "packages/nodes-base/nodes/MoveBinaryData/test/MoveBinaryData.workflow.json"
+  },
+  {
+    "meta": {
+      "instanceId": "104a4d08d8897b8bdeb38aaca515021075e0bd8544c983c2bb8c86e6a8e6081c"
+    },
+    "nodeCount": 4,
+    "nodes": [
+      {
+        "id": "5ebe2f65-45db-4b22-bd2b-43993c20806f",
+        "name": "When clicking \"Execute Workflow\"",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          740,
+          320
+        ],
+        "parameters": {},
+        "parameterCount": 0,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "2e81f78c-41a5-48de-80c4-74abf163cd57",
+        "name": "Code",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 1,
+        "position": [
+          980,
+          320
+        ],
+        "parameters": {
+          "jsCode": "return [\n  {\n    label: 'Free Users',\n    labels: [\"Berlin\", \"Paris\", \"Rome\", \"New York\"],\n    data: [50, 60, 70, 180],\n    backgroundColor: '#121d6d77',\n    chartType: 'line'\n  },\n  {\n    label: 'Paid Users',\n    labels: [\"Berlin\", \"Paris\", \"Rome\", \"New York\"],\n    data: [30, 10, 14, 25],\n    backgroundColor: '#0c0d0d96',\n    chartType: 'bar'\n  },\n]"
+        },
+        "parameterCount": 1,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "9f6c9d1c-2732-473f-a357-5766265cd0db",
+        "name": "BarChart",
+        "type": "n8n-nodes-base.quickChart",
+        "typeVersion": 1,
+        "position": [
+          1220,
+          200
+        ],
+        "parameters": {
+          "labelsUi": {
+            "labelsValues": [
+              {
+                "label": "Q1"
+              },
+              {
+                "label": "Q2"
+              },
+              {
+                "label": "Q3"
+              },
+              {
+                "label": "Q4"
+              }
+            ]
+          },
+          "data": "={{ $json.data }}",
+          "chartOptions": {
+            "backgroundColor": "#f93636ff",
+            "devicePixelRatio": 2,
+            "format": "png",
+            "height": 300,
+            "horizontal": true,
+            "width": 500
+          },
+          "datasetOptions": {
+            "backgroundColor": "={{ $json[\"backgroundColor\"] }}",
+            "borderColor": "#e81010",
+            "label": "={{ $json[\"label\"] }}"
+          }
+        },
+        "parameterCount": 4,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "6c8e1463-c384-4f5c-9de3-d7e052b02b0a",
+        "name": "Doughnut",
+        "type": "n8n-nodes-base.quickChart",
+        "typeVersion": 1,
+        "position": [
+          1220,
+          400
+        ],
+        "parameters": {
+          "chartType": "doughnut",
+          "labelsUi": {
+            "labelsValues": [
+              {
+                "label": "Q1"
+              },
+              {
+                "label": "Q2"
+              },
+              {
+                "label": "Q3"
+              },
+              {
+                "label": "Q4"
+              }
+            ]
+          },
+          "data": "={{ $json.data }}",
+          "chartOptions": {
+            "backgroundColor": "#f93636ff",
+            "devicePixelRatio": 2,
+            "format": "png",
+            "height": 300,
+            "width": 500
+          },
+          "datasetOptions": {
+            "backgroundColor": "={{ $json[\"backgroundColor\"] }}",
+            "borderColor": "#e81010",
+            "label": "={{ $json[\"label\"] }}"
+          }
+        },
+        "parameterCount": 5,
+        "hasCredentials": false,
+        "disabled": false
+      }
+    ],
+    "connections": {
+      "When clicking \"Execute Workflow\"": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "BarChart",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Doughnut",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "connectionCount": 3,
+    "patterns": {
+      "triggers": [
+        "When clicking \"Execute Workflow\""
+      ],
+      "actions": [
+        "Code",
+        "BarChart",
+        "Doughnut"
+      ],
+      "transformations": [],
+      "helpers": []
+    },
+    "dataFlow": [
+      {
+        "from": "When clicking \"Execute Workflow\"",
+        "to": "Code",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Code",
+        "to": "BarChart",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Code",
+        "to": "Doughnut",
+        "type": "main",
+        "index": 0
+      }
+    ],
+    "sourceFile": "packages/nodes-base/nodes/QuickChart/test/QuickChart.workflow.json"
+  },
+  {
+    "meta": {
+      "instanceId": "104a4d08d8897b8bdeb38aaca515021075e0bd8544c983c2bb8c86e6a8e6081c"
+    },
+    "nodeCount": 2,
+    "nodes": [
+      {
+        "id": "209e36b6-de70-4cc4-ac95-ca17fd3f83ff",
+        "name": "When clicking \"Execute Workflow\"",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          1020,
+          640
+        ],
+        "parameters": {},
+        "parameterCount": 0,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "1901bee9-d429-4485-9fdb-e5cd3aa64eab",
+        "name": "Read Binary File",
+        "type": "n8n-nodes-base.readBinaryFile",
+        "typeVersion": 1,
+        "position": [
+          1240,
+          640
+        ],
+        "parameters": {
+          "filePath": "C:\\Test\\image.jpg"
+        },
+        "parameterCount": 1,
+        "hasCredentials": false,
+        "disabled": false
+      }
+    ],
+    "connections": {
+      "When clicking \"Execute Workflow\"": {
+        "main": [
+          [
+            {
+              "node": "Read Binary File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "connectionCount": 1,
+    "patterns": {
+      "triggers": [
+        "When clicking \"Execute Workflow\""
+      ],
+      "actions": [
+        "Read Binary File"
+      ],
+      "transformations": [],
+      "helpers": []
+    },
+    "dataFlow": [
+      {
+        "from": "When clicking \"Execute Workflow\"",
+        "to": "Read Binary File",
+        "type": "main",
+        "index": 0
+      }
+    ],
+    "sourceFile": "packages/nodes-base/nodes/ReadBinaryFile/test/ReadBinaryFile.workflow.json"
+  },
+  {
+    "meta": {
+      "instanceId": "104a4d08d8897b8bdeb38aaca515021075e0bd8544c983c2bb8c86e6a8e6081c"
+    },
+    "nodeCount": 2,
+    "nodes": [
+      {
+        "id": "90c8a569-5351-44a4-9073-b8d114108676",
+        "name": "When clicking \"Execute Workflow\"",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          680,
+          640
+        ],
+        "parameters": {},
+        "parameterCount": 0,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "id": "b4974ce2-9bc8-4242-b6f9-86b43608b521",
+        "name": "Read Binary Files",
+        "type": "n8n-nodes-base.readBinaryFiles",
+        "typeVersion": 1,
+        "position": [
+          880,
+          640
+        ],
+        "parameters": {
+          "fileSelector": "C:/Test/data/*.json"
+        },
+        "parameterCount": 1,
+        "hasCredentials": false,
+        "disabled": false
+      }
+    ],
+    "connections": {
+      "When clicking \"Execute Workflow\"": {
+        "main": [
+          [
+            {
+              "node": "Read Binary Files",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "connectionCount": 1,
+    "patterns": {
+      "triggers": [
+        "When clicking \"Execute Workflow\""
+      ],
+      "actions": [
+        "Read Binary Files"
+      ],
+      "transformations": [],
+      "helpers": []
+    },
+    "dataFlow": [
+      {
+        "from": "When clicking \"Execute Workflow\"",
+        "to": "Read Binary Files",
+        "type": "main",
+        "index": 0
+      }
+    ],
+    "sourceFile": "packages/nodes-base/nodes/ReadBinaryFiles/test/ReadBinaryFiles.workflow.json"
+  },
+  {
+    "meta": {},
+    "nodeCount": 3,
+    "nodes": [
+      {
+        "name": "When clicking \"Execute Workflow\"",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          660,
+          580
+        ],
+        "parameters": {},
+        "parameterCount": 0,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "name": "Read sample-encrypted.pdf",
+        "type": "n8n-nodes-base.readBinaryFile",
+        "typeVersion": 1,
+        "position": [
+          880,
+          780
+        ],
+        "parameters": {
+          "filePath": "C:\\Test\\sample-encrypted.pdf"
+        },
+        "parameterCount": 1,
+        "hasCredentials": false,
+        "disabled": false
+      },
+      {
+        "name": "Read PDF (encrypted)",
+        "type": "n8n-nodes-base.readPDF",
+        "typeVersion": 1,
+        "position": [
+          1100,
+          780
+        ],
+        "parameters": {
+          "encrypted": true,
+          "password": "ReaderPassword"
+        },
+        "parameterCount": 2,
+        "hasCredentials": false,
+        "disabled": false
+      }
+    ],
+    "connections": {
+      "When clicking \"Execute Workflow\"": {
+        "main": [
+          [
+            {
+              "node": "Read sample-encrypted.pdf",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Read sample-encrypted.pdf": {
+        "main": [
+          [
+            {
+              "node": "Read PDF (encrypted)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "connectionCount": 2,
+    "patterns": {
+      "triggers": [
+        "When clicking \"Execute Workflow\""
+      ],
+      "actions": [
+        "Read sample-encrypted.pdf",
+        "Read PDF (encrypted)"
+      ],
+      "transformations": [],
+      "helpers": []
+    },
+    "dataFlow": [
+      {
+        "from": "When clicking \"Execute Workflow\"",
+        "to": "Read sample-encrypted.pdf",
+        "type": "main",
+        "index": 0
+      },
+      {
+        "from": "Read sample-encrypted.pdf",
+        "to": "Read PDF (encrypted)",
+        "type": "main",
+        "index": 0
+      }
+    ],
+    "sourceFile": "packages/nodes-base/nodes/ReadPdf/test/ReadPDF-encrypted.workflow.json"
+  }
+]

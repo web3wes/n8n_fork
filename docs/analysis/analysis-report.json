@@ -1,0 +1,149 @@
+{
+  "meta": {
+    "timestamp": "2025-06-21T17:58:34.931Z",
+    "totalNodes": 527,
+    "n8nInstance": "http://localhost:5678"
+  },
+  "summary": {
+    "nodeCategories": [
+      {
+        "category": "triggers",
+        "count": 107,
+        "examples": [
+          "ActiveCampaign Trigger",
+          "Acuity Scheduling Trigger",
+          "Affinity Trigger",
+          "Airtable Trigger",
+          "AMQP Trigger"
+        ]
+      },
+      {
+        "category": "actions",
+        "count": 221,
+        "examples": [
+          "Affinity",
+          "Airtable",
+          "Airtable",
+          "Asana",
+          "Automizy"
+        ]
+      },
+      {
+        "category": "transformations",
+        "count": 193,
+        "examples": [
+          "Action Network",
+          "ActiveCampaign",
+          "Adalo",
+          "Agile CRM",
+          "AMQP Sender"
+        ]
+      },
+      {
+        "category": "helpers",
+        "count": 6,
+        "examples": [
+          "No Operation, do nothing",
+          "Simulate",
+          "Loop Over Items (Split in Batches)",
+          "Split In Batches",
+          "Split In Batches"
+        ]
+      }
+    ],
+    "topServices": [
+      {
+        "service": "Airtable",
+        "count": 3
+      },
+      {
+        "service": "Google Drive",
+        "count": 3
+      },
+      {
+        "service": "Gmail",
+        "count": 3
+      },
+      {
+        "service": "HTTP Request",
+        "count": 3
+      },
+      {
+        "service": "HubSpot",
+        "count": 3
+      },
+      {
+        "service": "Item Lists",
+        "count": 3
+      },
+      {
+        "service": "Microsoft Outlook",
+        "count": 3
+      },
+      {
+        "service": "Notion",
+        "count": 3
+      },
+      {
+        "service": "Postgres",
+        "count": 3
+      },
+      {
+        "service": "Slack",
+        "count": 3
+      },
+      {
+        "service": "Switch",
+        "count": 3
+      },
+      {
+        "service": "ActiveCampaign",
+        "count": 2
+      },
+      {
+        "service": "Affinity",
+        "count": 2
+      },
+      {
+        "service": "Asana",
+        "count": 2
+      },
+      {
+        "service": "Autopilot",
+        "count": 2
+      },
+      {
+        "service": "AWS SNS",
+        "count": 2
+      },
+      {
+        "service": "AWS S3",
+        "count": 2
+      },
+      {
+        "service": "Box",
+        "count": 2
+      },
+      {
+        "service": "Chargebee",
+        "count": 2
+      },
+      {
+        "service": "Webex by Cisco",
+        "count": 2
+      }
+    ],
+    "parameterDistribution": {
+      "0": 1,
+      "51-100": 41,
+      "100+": 12,
+      "1-10": 288,
+      "11-50": 185
+    }
+  },
+  "knowledgeBase": {
+    "totalDocuments": 527,
+    "avgDocumentLength": 1046,
+    "readyForVectorization": true
+  }
+}
