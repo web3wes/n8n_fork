@@ -2175,7 +2175,7 @@
 	"workflowHistory.action.clone.success.title": "Successfully cloned workflow version",
 	"workflowHistory.action.clone.success.message": "Open cloned workflow in a new tab",
 	"workflows.heading": "Workflows",
-	"workflows.add": "Add workflow",
+	"workflows.add": "Add workflows",
 	"workflows.project.add": "Add workflow to project",
 	"workflows.item.open": "Open",
 	"workflows.item.share": "Share...",
