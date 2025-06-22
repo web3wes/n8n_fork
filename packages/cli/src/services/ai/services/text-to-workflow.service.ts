@@ -406,13 +406,26 @@ REQUIREMENTS:
 
 ROUTING LOGIC REQUIREMENTS:
 - Director agents should use Switch or If nodes for routing decisions
-- Multiple outputs should connect to different paths, not all at once
-- Use proper conditional parameters for routing logic
+- Switch nodes MUST connect ALL outputs - never leave empty arrays []
+- For Switch with 3 rules, create exactly 3 output connections
+- Each Switch output connects to a different node
+
+SWITCH NODE CONNECTION EXAMPLES:
+For a Switch node with 3 rules (simple/moderate/complex):
+"Switch": {
+  "main": [
+    [{"node": "Email Send", "type": "main", "index": 0}],
+    [{"node": "Slack", "type": "main", "index": 0}],
+    [{"node": "Airtable", "type": "main", "index": 0}]
+  ]
+}
+
+CRITICAL: Never generate empty connection arrays [] for Switch outputs!
 
 SPECIFIC NODE DEFAULTS:
 - AI/OpenAI nodes: model="gpt-3.5-turbo", resource="text", operation="complete"
 - Email nodes: Include proper host, port, authentication parameters
-- Switch nodes: Include dataType, value1, and rules parameters
+- Switch nodes: Include dataType, value1, and rules parameters with ALL outputs connected
 - If nodes: Include proper conditions structure
 
 Node sequence: ${plan.selectedNodes.map((n) => n.displayName).join(' → ')}

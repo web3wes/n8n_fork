@@ -565,4 +565,93 @@ export class KnowledgeCoreService {
 			defaults: node.defaults || {},
 		};
 	}
+
+	async syncWorkflowExamples(): Promise<void> {
+		try {
+			console.log('🔄 Syncing workflow examples for pattern training...');
+
+			// Collect workflow patterns from the repo
+			const workflowPatterns = await this.collectWorkflowPatterns();
+
+			// Create embeddings for workflow patterns
+			const documents = workflowPatterns.map((pattern, index) => ({
+				pageContent: pattern.description,
+				metadata: {
+					id: `workflow-pattern-${index}`,
+					type: 'workflow_pattern',
+					nodes: pattern.nodeTypes,
+					connections: pattern.connectionPattern,
+					useCase: pattern.useCase,
+					complexity: pattern.complexity,
+				},
+			}));
+
+			if (documents.length > 0) {
+				await this.nodeVectorStore?.addDocuments(documents);
+				console.log(`✅ Added ${documents.length} workflow patterns to vector store`);
+			}
+		} catch (error) {
+			console.error('❌ Error syncing workflow examples:', error);
+		}
+	}
+
+	private async collectWorkflowPatterns(): Promise<
+		Array<{
+			description: string;
+			nodeTypes: string[];
+			connectionPattern: string;
+			useCase: string;
+			complexity: string;
+		}>
+	> {
+		const patterns = [];
+
+		// Common workflow patterns based on repo examples
+		patterns.push({
+			description:
+				'Switch node routing pattern: Webhook receives data, AI analyzes it, Switch routes to 3 different outputs based on conditions. Each Switch output connects to a different action node (Email, Slack, Database). No empty connection arrays.',
+			nodeTypes: ['webhook', 'openai', 'switch', 'email', 'slack', 'database'],
+			connectionPattern: 'linear_to_switch_to_multiple',
+			useCase: 'request_routing',
+			complexity: 'medium',
+		});
+
+		patterns.push({
+			description:
+				'Director agent pattern: Manual trigger starts workflow, AI agent makes decisions, Switch node routes to different specialized handlers. Each Switch rule connects to a specific output path.',
+			nodeTypes: ['manual', 'openai', 'switch', 'specialized_handlers'],
+			connectionPattern: 'decision_tree',
+			useCase: 'ai_director',
+			complexity: 'high',
+		});
+
+		patterns.push({
+			description:
+				'Data pipeline pattern: Trigger receives data, transforms it through multiple steps, stores results. Linear connection pattern with data transformation nodes.',
+			nodeTypes: ['trigger', 'transform', 'process', 'store'],
+			connectionPattern: 'linear_pipeline',
+			useCase: 'data_processing',
+			complexity: 'medium',
+		});
+
+		patterns.push({
+			description:
+				'Conditional workflow pattern: If/Switch nodes create branching logic. Each condition output connects to different action paths. No missing connections in conditional branches.',
+			nodeTypes: ['trigger', 'condition', 'branch_actions'],
+			connectionPattern: 'conditional_branching',
+			useCase: 'conditional_logic',
+			complexity: 'medium',
+		});
+
+		patterns.push({
+			description:
+				'API integration pattern: HTTP Request nodes call external APIs, process responses, handle errors. Includes proper error handling branches.',
+			nodeTypes: ['trigger', 'http_request', 'process_response', 'error_handler'],
+			connectionPattern: 'api_with_error_handling',
+			useCase: 'api_integration',
+			complexity: 'medium',
+		});
+
+		return patterns;
+	}
 }
