@@ -1,0 +1,67 @@
+{
+  "name": "Webhook to Slack Notification Workflow",
+  "active": false,
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "path": "webhook-path",
+        "method": "POST",
+        "responseMode": "responseNode",
+        "httpMethod": "GET",
+        "options": {}
+      }
+    },
+    {
+      "id": "2",
+      "name": "Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2,
+      "position": [
+        400,
+        300
+      ],
+      "parameters": {
+        "channel": "#general",
+        "text": "New webhook received!",
+        "as_user": true,
+        "authentication": "accessToken",
+        "resource": "message",
+        "operation": "post",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "meta": {
+    "instanceId": "text-to-workflow-generated"
+  },
+  "tags": [
+    "ai-generated-1750605120920"
+  ],
+  "requiredCredentials": [
+    "slackApi"
+  ],
+  "versionId": "f768e46f-4a8e-4030-a0a5-a1b9acfa4a72",
+  "id": "g9ahyxv7adl"
+}

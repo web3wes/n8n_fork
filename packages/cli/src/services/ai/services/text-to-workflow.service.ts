@@ -31,19 +31,7 @@ interface WorkflowPlan {
 	missingInformation: string[];
 }
 
-interface GeneratedWorkflow {
-	name: string;
-	active: boolean;
-	nodes: WorkflowNode[];
-	connections: Record<string, any>;
-	settings?: Record<string, any>;
-	meta?: Record<string, any>;
-	tags?: string[];
-	requiredCredentials: string[];
-	validationErrors?: string[];
-	versionId?: string;
-	id?: string;
-}
+import type { GeneratedWorkflow } from '../schemas/textToWorkflow';
 
 interface WorkflowNode {
 	id: string;
@@ -322,14 +310,16 @@ Include ALL necessary nodes for the complete workflow!`;
 			// Add required options field like real n8n workflows
 			sanitizedParameters.options = sanitizedParameters.options || {};
 
-			return {
-				id: generateUUID(),
-				name: node.displayName,
-				type: node.nodeType,
-				typeVersion: this.getNodeTypeVersion(node.nodeType),
-				position: [200 + index * 200, 300],
-				parameters: sanitizedParameters,
-			};
+			// Explicitly create object with parameters first
+			const nodeSpec: any = {};
+			nodeSpec.parameters = sanitizedParameters;
+			nodeSpec.id = generateUUID();
+			nodeSpec.name = node.displayName;
+			nodeSpec.type = node.nodeType;
+			nodeSpec.typeVersion = this.getNodeTypeVersion(node.nodeType);
+			nodeSpec.position = [200 + index * 200, 300];
+
+			return nodeSpec;
 		});
 
 		// Create connections using node NAMES (not IDs) as keys - this is critical!
@@ -363,14 +353,15 @@ CRITICAL: Follow this EXACT n8n workflow structure. This is how REAL n8n workflo
   "name": "${plan.title}",
   "nodes": [
     {
-      "id": "uuid-string",
-      "name": "Node Display Name",
-      "type": "n8n-nodes-base.nodeType",
-      "position": [x, y],
       "parameters": {
         "param1": "value1",
         "param2": "value2"
-      }
+      },
+      "id": "uuid-string",
+      "name": "Node Display Name",
+      "type": "n8n-nodes-base.nodeType",
+      "typeVersion": 1,
+      "position": [x, y]
     }
   ],
   "connections": {
@@ -389,7 +380,7 @@ CRITICAL: Follow this EXACT n8n workflow structure. This is how REAL n8n workflo
   "meta": {
     "instanceId": "${instanceId}"
   },
-  "tags": []
+  "tags": [{ "name": "ai-generated" }]
 }
 
 REQUIREMENTS:
@@ -516,19 +507,28 @@ Generate the complete valid n8n workflow JSON:`;
 				// Ensure options field exists like in real n8n workflows
 				sanitizedParameters.options = sanitizedParameters.options || {};
 
-				return {
-					id: node.id,
-					name: node.name,
-					type: node.type,
-					typeVersion: this.getNodeTypeVersion(node.type), // Always use our version logic
-					position: node.position || [200 + index * 200, 300],
-					parameters: sanitizedParameters,
-				};
+				// Explicitly create object with parameters first
+				const validatedNode: any = {};
+				validatedNode.parameters = sanitizedParameters;
+				validatedNode.id = node.id;
+				validatedNode.name = node.name;
+				validatedNode.type = node.type;
+				validatedNode.typeVersion = this.getNodeTypeVersion(node.type);
+				validatedNode.position = node.position || [200 + index * 200, 300];
+
+				return validatedNode;
 			});
 
 			console.log(`✅ Created validated nodes: ${validatedNodes.length}`);
 
 			// Create the final workflow structure matching n8n format
+			// Ensure tags are in correct object format
+			let tags = [{ name: `ai-generated-${Date.now()}` }];
+			if (parsed.tags && Array.isArray(parsed.tags)) {
+				// Convert string tags to object format if needed
+				tags = parsed.tags.map((tag: any) => (typeof tag === 'string' ? { name: tag } : tag));
+			}
+
 			const workflow: GeneratedWorkflow = {
 				name: parsed.name,
 				active: false,
@@ -536,7 +536,7 @@ Generate the complete valid n8n workflow JSON:`;
 				connections: parsed.connections || {},
 				settings: parsed.settings || {},
 				meta: parsed.meta || { instanceId: 'text-to-workflow-generated' },
-				tags: parsed.tags || [`ai-generated-${Date.now()}`],
+				tags: tags,
 				requiredCredentials: plan.requiredCredentials || [],
 				// Add n8n-specific fields
 				versionId: parsed.versionId || this.generateUUID(),
@@ -568,7 +568,7 @@ Generate the complete valid n8n workflow JSON:`;
 				connections: {},
 				settings: {},
 				meta: { instanceId: 'text-to-workflow-generated' },
-				tags: [`ai-fallback-${Date.now()}`],
+				tags: [{ name: `ai-fallback-${Date.now()}` }],
 				requiredCredentials: [],
 				versionId: this.generateUUID(),
 				id: Math.random().toString(36).substr(2, 16),
@@ -792,23 +792,32 @@ Generate the complete valid n8n workflow JSON:`;
 			sanitized.nodes = sanitized.nodes.map((node, index) => {
 				const sanitizedNode = { ...node };
 
-				// Ensure core node properties are strings
-				sanitizedNode.id = sanitizedNode.id || this.generateUUID();
-				sanitizedNode.name = sanitizedNode.name || `Node ${index + 1}`;
-				sanitizedNode.type = sanitizedNode.type || 'n8n-nodes-base.manualTrigger';
-
-				// Deep sanitize node parameters
-				sanitizedNode.parameters = this.deepSanitizeNodeParameters(
+				// Deep sanitize node parameters first
+				const sanitizedParameters = this.deepSanitizeNodeParameters(
 					sanitizedNode.parameters || {},
-					sanitizedNode.type,
+					sanitizedNode.type || 'n8n-nodes-base.manualTrigger',
 				);
 
 				// Ensure credentials object is properly structured
+				let sanitizedCredentials;
 				if (sanitizedNode.credentials) {
-					sanitizedNode.credentials = this.sanitizeCredentials(sanitizedNode.credentials);
+					sanitizedCredentials = this.sanitizeCredentials(sanitizedNode.credentials);
 				}
 
-				return sanitizedNode;
+				// Return in proper n8n format with parameters first
+				const sanitizedNodeResult: any = {};
+				sanitizedNodeResult.parameters = sanitizedParameters;
+				sanitizedNodeResult.id = sanitizedNode.id || this.generateUUID();
+				sanitizedNodeResult.name = sanitizedNode.name || `Node ${index + 1}`;
+				sanitizedNodeResult.type = sanitizedNode.type || 'n8n-nodes-base.manualTrigger';
+				sanitizedNodeResult.typeVersion = sanitizedNode.typeVersion || 1;
+				sanitizedNodeResult.position = sanitizedNode.position || [200 + index * 200, 300];
+
+				if (sanitizedCredentials) {
+					sanitizedNodeResult.credentials = sanitizedCredentials;
+				}
+
+				return sanitizedNodeResult;
 			});
 		}
 
@@ -818,7 +827,16 @@ Generate the complete valid n8n workflow JSON:`;
 		// Ensure metadata is properly structured
 		sanitized.meta = sanitized.meta || { instanceId: 'text-to-workflow-generated' };
 		sanitized.settings = sanitized.settings || {};
-		sanitized.tags = Array.isArray(sanitized.tags) ? sanitized.tags : ['text-to-workflow'];
+
+		// Ensure tags are in correct object format
+		if (Array.isArray(sanitized.tags)) {
+			// Convert string tags to object format if needed
+			sanitized.tags = sanitized.tags.map((tag: any) =>
+				typeof tag === 'string' ? { name: tag } : tag,
+			);
+		} else {
+			sanitized.tags = [{ name: `ai-generated-${Date.now()}` }];
+		}
 
 		return sanitized;
 	}

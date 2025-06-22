@@ -1,0 +1,190 @@
+{
+  "name": "Customer Support Email Routing Workflow",
+  "active": false,
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Read Customer Support Emails",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "host": "imap.example.com",
+        "port": 993,
+        "secure": true,
+        "user": "support@example.com",
+        "password": "password",
+        "mailbox": "INBOX",
+        "fetchUnread": true,
+        "options": {}
+      }
+    },
+    {
+      "id": "2",
+      "name": "Analyze Email Content",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        400,
+        300
+      ],
+      "parameters": {
+        "model": "text-davinci-003",
+        "prompt": "Classify the following email content into categories: Billing, Technical Support, General Inquiry. Email: {{$json[\"text\"]}}",
+        "maxTokens": 50,
+        "resource": "text",
+        "operation": "complete",
+        "options": {}
+      }
+    },
+    {
+      "id": "3",
+      "name": "Route Email Based on Category",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        600,
+        300
+      ],
+      "parameters": {
+        "property": "data.category",
+        "rules": {
+          "rules": [
+            {
+              "operation": "equal",
+              "value2": "Billing"
+            },
+            {
+              "operation": "equal",
+              "value2": "Technical Support"
+            },
+            {
+              "operation": "equal",
+              "value2": "General Inquiry"
+            }
+          ]
+        },
+        "dataType": "string",
+        "value1": "={{ $json.complexity }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "4",
+      "name": "Send to Billing Team",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        800,
+        200
+      ],
+      "parameters": {
+        "fromEmail": "support@example.com",
+        "toEmail": "billing@example.com",
+        "subject": "New Billing Inquiry",
+        "text": "A new billing inquiry has been received. Please check the support inbox.",
+        "options": {}
+      }
+    },
+    {
+      "id": "5",
+      "name": "Send to Technical Support Team",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        800,
+        300
+      ],
+      "parameters": {
+        "fromEmail": "support@example.com",
+        "toEmail": "techsupport@example.com",
+        "subject": "New Technical Support Request",
+        "text": "A new technical support request has been received. Please check the support inbox.",
+        "options": {}
+      }
+    },
+    {
+      "id": "6",
+      "name": "Send to General Inquiry Team",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        800,
+        400
+      ],
+      "parameters": {
+        "fromEmail": "support@example.com",
+        "toEmail": "generalinquiry@example.com",
+        "subject": "New General Inquiry",
+        "text": "A new general inquiry has been received. Please check the support inbox.",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Read Customer Support Emails": {
+      "main": [
+        [
+          {
+            "node": "Analyze Email Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Email Content": {
+      "main": [
+        [
+          {
+            "node": "Route Email Based on Category",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Email Based on Category": {
+      "main": [
+        [
+          {
+            "node": "Send to Billing Team",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send to Technical Support Team",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Send to General Inquiry Team",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "meta": {
+    "instanceId": "text-to-workflow-generated"
+  },
+  "tags": [
+    "ai-generated-1750603275154"
+  ],
+  "requiredCredentials": [
+    "emailImap",
+    "emailSmtp",
+    "openAiApi"
+  ],
+  "versionId": "b0ff8c2e-bba0-4c16-9202-974fac44ecb4",
+  "id": "i3idmbrw5qg"
+}

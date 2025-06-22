@@ -1,0 +1,145 @@
+{
+  "name": "Order Processing and Routing Workflow",
+  "active": false,
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Order Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "path": "order-received",
+        "method": "POST",
+        "responseMode": "responseNode",
+        "httpMethod": "GET",
+        "options": {}
+      }
+    },
+    {
+      "id": "2",
+      "name": "Order Type Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        400,
+        300
+      ],
+      "parameters": {
+        "property": "orderType",
+        "rules": {
+          "rules": [
+            {
+              "operation": "equal",
+              "value2": "electronics"
+            },
+            {
+              "operation": "equal",
+              "value2": "clothing"
+            },
+            {
+              "operation": "equal",
+              "value2": "furniture"
+            }
+          ]
+        },
+        "dataType": "string",
+        "value1": "={{ $json.complexity }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "3",
+      "name": "Process Electronics Order",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        600,
+        200
+      ],
+      "parameters": {
+        "workflowId": "electronicsWorkflowId",
+        "options": {}
+      }
+    },
+    {
+      "id": "4",
+      "name": "Process Clothing Order",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        600,
+        300
+      ],
+      "parameters": {
+        "workflowId": "clothingWorkflowId",
+        "options": {}
+      }
+    },
+    {
+      "id": "5",
+      "name": "Process Furniture Order",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        600,
+        400
+      ],
+      "parameters": {
+        "workflowId": "furnitureWorkflowId",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Order Webhook": {
+      "main": [
+        [
+          {
+            "node": "Order Type Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Order Type Switch": {
+      "main": [
+        [
+          {
+            "node": "Process Electronics Order",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Process Clothing Order",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Process Furniture Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "meta": {
+    "instanceId": "text-to-workflow-generated"
+  },
+  "tags": [
+    "ai-generated-1750604110951"
+  ],
+  "requiredCredentials": [],
+  "versionId": "6420a917-e889-4fb9-96bf-f1af3864842c",
+  "id": "2cgcucev18q"
+}

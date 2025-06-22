@@ -49,9 +49,11 @@ export const generatedWorkflowSchema = z.object({
 	connections: z.record(z.any()),
 	settings: z.record(z.any()).optional(),
 	meta: z.record(z.any()).optional(),
-	tags: z.array(z.string()).optional(),
+	tags: z.array(z.object({ name: z.string() })).optional(),
 	requiredCredentials: z.array(z.string()),
 	validationErrors: z.array(z.string()).optional(),
+	versionId: z.string().optional(),
+	id: z.string().optional(),
 });
 
 // Schema for workflow refinement request

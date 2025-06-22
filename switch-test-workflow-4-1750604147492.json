@@ -1,0 +1,156 @@
+{
+  "name": "Content Moderation Workflow",
+  "active": false,
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "path": "content-moderation",
+        "method": "POST",
+        "responseMode": "responseNode",
+        "httpMethod": "GET",
+        "options": {}
+      }
+    },
+    {
+      "id": "2",
+      "name": "OpenAI",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        400,
+        300
+      ],
+      "parameters": {
+        "model": "text-davinci-003",
+        "prompt": "Moderate the following content: {{$json[\"body\"]}}",
+        "maxTokens": 100,
+        "resource": "text",
+        "operation": "complete",
+        "options": {}
+      }
+    },
+    {
+      "id": "3",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        600,
+        300
+      ],
+      "parameters": {
+        "property": "data.result",
+        "rules": {
+          "rules": [
+            {
+              "operation": "equal",
+              "value2": "inappropriate"
+            }
+          ]
+        },
+        "dataType": "string",
+        "value1": "={{ $json.complexity }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "4",
+      "name": "Send Alert Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        800,
+        200
+      ],
+      "parameters": {
+        "to": "moderator@example.com",
+        "subject": "Inappropriate Content Alert",
+        "text": "Inappropriate content detected: {{$json[\"body\"]}}",
+        "fromEmail": "support@example.com",
+        "toEmail": "",
+        "options": {}
+      }
+    },
+    {
+      "id": "5",
+      "name": "Send Approval Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        800,
+        400
+      ],
+      "parameters": {
+        "to": "user@example.com",
+        "subject": "Content Approved",
+        "text": "Your content has been approved.",
+        "fromEmail": "support@example.com",
+        "toEmail": "",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Send Alert Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Approval Email",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "meta": {
+    "instanceId": "text-to-workflow-generated"
+  },
+  "tags": [
+    "ai-generated-1750604147483"
+  ],
+  "requiredCredentials": [
+    "openAiApi",
+    "emailApi"
+  ],
+  "versionId": "9a804037-041d-4c5f-bac8-2086958f3ed4",
+  "id": "rb02jszs20g"
+}

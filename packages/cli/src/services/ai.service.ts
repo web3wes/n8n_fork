@@ -229,7 +229,14 @@ export class AIService {
 		// Validate request
 		const validatedRequest = workflowGenerationRequestSchema.parse(request);
 
-		return await this.textToWorkflow.generateWorkflow(validatedRequest);
+		const result = await this.textToWorkflow.generateWorkflow(validatedRequest);
+
+		// Ensure tags are in correct object format before returning
+		if (result.tags && Array.isArray(result.tags)) {
+			result.tags = result.tags.map((tag: any) => (typeof tag === 'string' ? { name: tag } : tag));
+		}
+
+		return result;
 	}
 
 	/**

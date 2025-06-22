@@ -1,10 +1,10 @@
 {
-  "name": "Customer Support Ticket Routing Workflow",
+  "name": "Customer Support Email Routing Workflow",
   "active": false,
   "nodes": [
     {
       "id": "1",
-      "name": "Read Support Emails",
+      "name": "Read Customer Support Emails",
       "type": "n8n-nodes-base.emailReadImap",
       "typeVersion": 1,
       "position": [
@@ -12,13 +12,13 @@
         300
       ],
       "parameters": {
-        "mailbox": "INBOX",
-        "email": "support@example.com",
-        "password": "your-email-password",
         "host": "imap.example.com",
         "port": 993,
         "secure": true,
         "user": "support@example.com",
+        "password": "password",
+        "mailbox": "INBOX",
+        "fetchUnread": true,
         "options": {}
       }
     },
@@ -34,7 +34,7 @@
       "parameters": {
         "model": "text-davinci-003",
         "prompt": "Classify the following email content into categories: Billing, Technical Support, General Inquiry. Email content: {{$json[\"text\"]}}",
-        "maxTokens": 50,
+        "maxTokens": 10,
         "resource": "text",
         "operation": "complete",
         "options": {}
@@ -42,7 +42,7 @@
     },
     {
       "id": "3",
-      "name": "Route Ticket",
+      "name": "Route Email",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 1,
       "position": [
@@ -54,12 +54,15 @@
         "rules": {
           "rules": [
             {
+              "operation": "equal",
               "value2": "Billing"
             },
             {
+              "operation": "equal",
               "value2": "Technical Support"
             },
             {
+              "operation": "equal",
               "value2": "General Inquiry"
             }
           ]
@@ -81,8 +84,8 @@
       "parameters": {
         "fromEmail": "support@example.com",
         "toEmail": "billing@example.com",
-        "subject": "New Billing Support Ticket",
-        "text": "A new billing support ticket has been received. Please review the details.",
+        "subject": "New Billing Inquiry",
+        "text": "A new billing inquiry has been received. Please check the support inbox.",
         "options": {}
       }
     },
@@ -98,8 +101,8 @@
       "parameters": {
         "fromEmail": "support@example.com",
         "toEmail": "techsupport@example.com",
-        "subject": "New Technical Support Ticket",
-        "text": "A new technical support ticket has been received. Please review the details.",
+        "subject": "New Technical Support Request",
+        "text": "A new technical support request has been received. Please check the support inbox.",
         "options": {}
       }
     },
@@ -116,13 +119,13 @@
         "fromEmail": "support@example.com",
         "toEmail": "info@example.com",
         "subject": "New General Inquiry",
-        "text": "A new general inquiry has been received. Please review the details.",
+        "text": "A new general inquiry has been received. Please check the support inbox.",
         "options": {}
       }
     }
   ],
   "connections": {
-    "Read Support Emails": {
+    "Read Customer Support Emails": {
       "main": [
         [
           {
@@ -137,14 +140,14 @@
       "main": [
         [
           {
-            "node": "Route Ticket",
+            "node": "Route Email",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Route Ticket": {
+    "Route Email": {
       "main": [
         [
           {
@@ -175,12 +178,14 @@
     "instanceId": "text-to-workflow-generated"
   },
   "tags": [
-    "text-to-workflow"
+    {
+      "name": "ai-generated-1750604089331"
+    }
   ],
   "requiredCredentials": [
     "emailImap",
     "openAi"
   ],
-  "versionId": "006cebc5-5988-4bef-823a-223f874064f2",
-  "id": "i5lv2ctja9s"
+  "versionId": "e9116ea6-c443-4575-a0ac-25f5653274a5",
+  "id": "1rrpem14pmi"
 }

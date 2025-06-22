@@ -1,0 +1,60 @@
+{
+  "name": "Webhook Data Logging Workflow",
+  "active": false,
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "path": "data-logging",
+        "method": "POST",
+        "responseMode": "responseNode",
+        "httpMethod": "GET",
+        "options": {}
+      }
+    },
+    {
+      "id": "2",
+      "name": "Function",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        400,
+        300
+      ],
+      "parameters": {
+        "functionCode": "return [{ json: { receivedData: items[0].json } }];",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Function",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "meta": {
+    "instanceId": "text-to-workflow-generated"
+  },
+  "tags": [
+    "ai-generated-1750605475377"
+  ],
+  "requiredCredentials": [],
+  "versionId": "004ceb11-1bd6-4b68-a316-2269d971568b",
+  "id": "urvde2vme9"
+}

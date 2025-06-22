@@ -1,0 +1,159 @@
+{
+  "name": "Department-Based Approval Workflow",
+  "active": false,
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "path": "department-approval",
+        "method": "POST",
+        "responseMode": "responseNode",
+        "httpMethod": "GET",
+        "options": {}
+      }
+    },
+    {
+      "id": "2",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        400,
+        300
+      ],
+      "parameters": {
+        "property": "department",
+        "rules": {
+          "rules": [
+            {
+              "operation": "equal",
+              "value2": "HR"
+            },
+            {
+              "operation": "equal",
+              "value2": "Finance"
+            },
+            {
+              "operation": "equal",
+              "value2": "IT"
+            }
+          ]
+        },
+        "dataType": "string",
+        "value1": "={{ $json.complexity }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "3",
+      "name": "Email Send HR",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        600,
+        200
+      ],
+      "parameters": {
+        "to": "hr@company.com",
+        "subject": "Approval Needed: HR Department",
+        "text": "An approval request has been submitted for the HR department.",
+        "fromEmail": "support@example.com",
+        "toEmail": "",
+        "options": {}
+      }
+    },
+    {
+      "id": "4",
+      "name": "Email Send Finance",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        600,
+        300
+      ],
+      "parameters": {
+        "to": "finance@company.com",
+        "subject": "Approval Needed: Finance Department",
+        "text": "An approval request has been submitted for the Finance department.",
+        "fromEmail": "support@example.com",
+        "toEmail": "",
+        "options": {}
+      }
+    },
+    {
+      "id": "5",
+      "name": "Email Send IT",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        600,
+        400
+      ],
+      "parameters": {
+        "to": "it@company.com",
+        "subject": "Approval Needed: IT Department",
+        "text": "An approval request has been submitted for the IT department.",
+        "fromEmail": "support@example.com",
+        "toEmail": "",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Email Send HR",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Email Send Finance",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Email Send IT",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "meta": {
+    "instanceId": "text-to-workflow-generated"
+  },
+  "tags": [
+    "ai-generated-1750602923497"
+  ],
+  "requiredCredentials": [
+    "email"
+  ],
+  "versionId": "97abdac4-01fe-44aa-b473-21ff576296ff",
+  "id": "zji7pbyxvnc"
+}

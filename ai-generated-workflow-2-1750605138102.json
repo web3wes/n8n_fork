@@ -31,7 +31,6 @@
       "parameters": {
         "operation": "download",
         "fileId": "={{$json[\"id\"]}}",
-        "binaryPropertyName": "data",
         "options": {}
       }
     },
@@ -47,7 +46,7 @@
       "parameters": {
         "resource": "completion",
         "model": "text-davinci-003",
-        "prompt": "Process the content of the file: {{$binary.data}}",
+        "prompt": "Process the content of the file: {{$json[\"data\"]}}",
         "maxTokens": 150,
         "operation": "complete",
         "options": {}
@@ -83,12 +82,12 @@
     "instanceId": "text-to-workflow-generated"
   },
   "tags": [
-    "text-to-workflow"
+    "ai-generated-1750605138096"
   ],
   "requiredCredentials": [
     "googleDriveOAuth2Api",
     "openAiApi"
   ],
-  "versionId": "87141de4-6db5-4faa-aad9-e87519d2c5f1",
-  "id": "ug2bl78dxr9"
+  "versionId": "75881662-6ca7-4426-99fd-8c795304348a",
+  "id": "rlzvc0v0oin"
 }
