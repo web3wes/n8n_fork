@@ -536,7 +536,7 @@ Generate the complete valid n8n workflow JSON:`;
 				connections: parsed.connections || {},
 				settings: parsed.settings || {},
 				meta: parsed.meta || { instanceId: 'text-to-workflow-generated' },
-				tags: parsed.tags || ['text-to-workflow'],
+				tags: parsed.tags || [`ai-generated-${Date.now()}`],
 				requiredCredentials: plan.requiredCredentials || [],
 				// Add n8n-specific fields
 				versionId: parsed.versionId || this.generateUUID(),
@@ -568,7 +568,7 @@ Generate the complete valid n8n workflow JSON:`;
 				connections: {},
 				settings: {},
 				meta: { instanceId: 'text-to-workflow-generated' },
-				tags: ['text-to-workflow'],
+				tags: [`ai-fallback-${Date.now()}`],
 				requiredCredentials: [],
 				versionId: this.generateUUID(),
 				id: Math.random().toString(36).substr(2, 16),

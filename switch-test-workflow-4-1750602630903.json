@@ -1,0 +1,181 @@
+{
+  "name": "Content Moderation Workflow",
+  "active": false,
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "path": "content-moderation",
+        "method": "POST",
+        "responseMode": "responseNode",
+        "httpMethod": "GET",
+        "options": {}
+      }
+    },
+    {
+      "id": "2",
+      "name": "OpenAI",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        400,
+        300
+      ],
+      "parameters": {
+        "model": "text-davinci-003",
+        "prompt": "Moderate the following content: {{$json[\"body\"]}}",
+        "maxTokens": 100,
+        "resource": "text",
+        "operation": "complete",
+        "options": {}
+      }
+    },
+    {
+      "id": "3",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        600,
+        300
+      ],
+      "parameters": {
+        "property": "data.result",
+        "rules": {
+          "rules": [
+            {
+              "operation": "equal",
+              "value2": "inappropriate"
+            }
+          ]
+        },
+        "dataType": "string",
+        "value1": "={{ $json.complexity }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "4",
+      "name": "Email Send",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        800,
+        200
+      ],
+      "parameters": {
+        "fromEmail": "moderator@example.com",
+        "toEmail": "admin@example.com",
+        "subject": "Inappropriate Content Detected",
+        "text": "Inappropriate content was detected and needs review.",
+        "options": {}
+      }
+    },
+    {
+      "id": "5",
+      "name": "Database - Log",
+      "type": "n8n-nodes-base.database",
+      "typeVersion": 1,
+      "position": [
+        800,
+        400
+      ],
+      "parameters": {
+        "operation": "insert",
+        "table": "content_logs",
+        "fields": {
+          "content": "{{$json[\"body\"]}}",
+          "status": "appropriate"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "6",
+      "name": "Database - Inappropriate Log",
+      "type": "n8n-nodes-base.database",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        200
+      ],
+      "parameters": {
+        "operation": "insert",
+        "table": "content_logs",
+        "fields": {
+          "content": "{{$json[\"body\"]}}",
+          "status": "inappropriate"
+        },
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Email Send",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Database - Inappropriate Log",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Database - Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "meta": {
+    "instanceId": "text-to-workflow-generated"
+  },
+  "tags": [
+    "text-to-workflow"
+  ],
+  "requiredCredentials": [
+    "openAiApi",
+    "emailSmtp",
+    "databaseConnection"
+  ],
+  "versionId": "e145b764-7b0e-4705-a1db-d821fca6a175",
+  "id": "3pp4vborvrq"
+}
