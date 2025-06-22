@@ -261,8 +261,8 @@ export class AIService {
 
 		try {
 			await this.knowledgeCore.syncNodeDefinitions();
-			// TODO: Re-enable workflow pattern sync after debugging
-			// await this.knowledgeCore.syncWorkflowExamples();
+			// Sync real workflow examples from repo files
+			await this.knowledgeCore.syncWorkflowExamples();
 			return this.knowledgeCore.getKnowledgeCoreStatus();
 		} catch (error) {
 			console.error('❌ Detailed sync error:', error);
