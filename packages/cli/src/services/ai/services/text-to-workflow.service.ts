@@ -111,7 +111,7 @@ export class TextToWorkflowService {
 				displayName: doc.displayName,
 				category: doc.category,
 				confidence: Math.max(0.9 - index * 0.05, 0.1), // Decreasing confidence
-				reason: `Semantic match for: ${doc.description.substring(0, 100)}...`,
+				reason: `Semantic match for: ${(doc.description || 'No description available').substring(0, 100)}...`,
 			}));
 
 			console.log(`🎯 Stage 1 complete: Selected ${selectedNodes.length} candidate nodes`);
@@ -918,15 +918,42 @@ Generate the complete valid n8n workflow JSON:`;
 		const sanitized: Record<string, any> = {
 			...params,
 			dataType: params.dataType || 'string',
-			value1: params.value1 || '={{ $json.field }}',
+			value1: params.value1 || '={{ $json.category }}',
 			options: params.options || {},
 		};
 
-		// Ensure rules structure is correct for Switch nodes
+		// Ensure rules structure is correct for Switch nodes with proper conditions
 		if (!sanitized.rules || !sanitized.rules.rules || !Array.isArray(sanitized.rules.rules)) {
 			sanitized.rules = {
-				rules: [{ value2: 'value1' }, { value2: 'value2' }, { value2: 'value3' }],
+				rules: [
+					{
+						operation: 'equal',
+						value2: 'billing',
+					},
+					{
+						operation: 'equal',
+						value2: 'technical',
+					},
+					{
+						operation: 'equal',
+						value2: 'general',
+					},
+				],
 			};
+		} else {
+			// Fix existing rules to ensure they have proper operation
+			sanitized.rules.rules = sanitized.rules.rules.map((rule: any) => ({
+				operation: rule.operation || 'equal',
+				value2: rule.value2 || 'default',
+			}));
+		}
+
+		// Also ensure the rules have the operation field even if they exist
+		if (sanitized.rules && sanitized.rules.rules) {
+			sanitized.rules.rules = sanitized.rules.rules.map((rule: any) => ({
+				...rule,
+				operation: rule.operation || 'equal',
+			}));
 		}
 
 		return sanitized;

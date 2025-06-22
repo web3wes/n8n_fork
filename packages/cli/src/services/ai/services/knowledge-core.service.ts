@@ -487,7 +487,7 @@ export class KnowledgeCoreService {
 			const nodeDocuments: NodeDocument[] = results.map((result) => ({
 				nodeType: result.metadata.nodeType,
 				displayName: result.metadata.displayName,
-				description: result.metadata.description,
+				description: result.metadata.description || 'No description available',
 				category: result.metadata.category,
 				properties: [], // Properties would need to be fetched separately or stored in metadata
 				usageExamples: [],
@@ -716,7 +716,7 @@ export class KnowledgeCoreService {
 
 			const nodes = workflow.nodes;
 			const connections = workflow.connections || {};
-			const nodeTypes = nodes.map((n: any) => n.type || 'unknown');
+			const nodeTypes: string[] = nodes.map((n: any) => n.type || 'unknown');
 			const nodeCount = nodes.length;
 
 			// Find Switch nodes and analyze their connections
@@ -755,7 +755,7 @@ export class KnowledgeCoreService {
 
 			// Create description
 			const fileName = filePath.split('/').pop() || 'unknown';
-			const uniqueNodeTypes = [
+			const uniqueNodeTypes: string[] = [
 				...new Set(nodeTypes.map((t: string) => t.replace('n8n-nodes-base.', ''))),
 			];
 

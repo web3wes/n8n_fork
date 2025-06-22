@@ -1,0 +1,186 @@
+{
+  "name": "Customer Support Email Routing Workflow",
+  "active": false,
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Read Customer Support Emails",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "host": "imap.example.com",
+        "port": 993,
+        "secure": true,
+        "user": "support@example.com",
+        "password": "password",
+        "mailbox": "INBOX",
+        "fetchUnread": true,
+        "options": {}
+      }
+    },
+    {
+      "id": "2",
+      "name": "Analyze Email Content",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        400,
+        300
+      ],
+      "parameters": {
+        "model": "text-davinci-003",
+        "prompt": "Classify this email into categories: Billing, Technical Support, General Inquiry.",
+        "maxTokens": 10,
+        "resource": "text",
+        "operation": "complete",
+        "options": {}
+      }
+    },
+    {
+      "id": "3",
+      "name": "Route Email",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        600,
+        300
+      ],
+      "parameters": {
+        "property": "data.classification",
+        "rules": {
+          "rules": [
+            {
+              "value2": "Billing"
+            },
+            {
+              "value2": "Technical Support"
+            },
+            {
+              "value2": "General Inquiry"
+            }
+          ]
+        },
+        "dataType": "string",
+        "value1": "={{ $json.complexity }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "4",
+      "name": "Send to Billing",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        800,
+        200
+      ],
+      "parameters": {
+        "fromEmail": "support@example.com",
+        "toEmail": "billing@example.com",
+        "subject": "New Billing Inquiry",
+        "text": "A new billing inquiry has been received.",
+        "options": {}
+      }
+    },
+    {
+      "id": "5",
+      "name": "Send to Technical Support",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        800,
+        300
+      ],
+      "parameters": {
+        "fromEmail": "support@example.com",
+        "toEmail": "techsupport@example.com",
+        "subject": "New Technical Support Request",
+        "text": "A new technical support request has been received.",
+        "options": {}
+      }
+    },
+    {
+      "id": "6",
+      "name": "Send to General Inquiry",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        800,
+        400
+      ],
+      "parameters": {
+        "fromEmail": "support@example.com",
+        "toEmail": "info@example.com",
+        "subject": "New General Inquiry",
+        "text": "A new general inquiry has been received.",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Read Customer Support Emails": {
+      "main": [
+        [
+          {
+            "node": "Analyze Email Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Email Content": {
+      "main": [
+        [
+          {
+            "node": "Route Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Email": {
+      "main": [
+        [
+          {
+            "node": "Send to Billing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send to Technical Support",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Send to General Inquiry",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "meta": {
+    "instanceId": "text-to-workflow-generated"
+  },
+  "tags": [
+    "text-to-workflow"
+  ],
+  "requiredCredentials": [
+    "emailImap",
+    "openAi"
+  ],
+  "versionId": "d3791469-f0b6-468b-ab2d-d57381374cf6",
+  "id": "acwl26lyhtv"
+}
