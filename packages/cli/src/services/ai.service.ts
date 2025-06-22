@@ -16,6 +16,14 @@ import {
 import { generateCurlSchema } from '@/services/ai/schemas/generateCurl';
 import { PineconeStore } from '@langchain/pinecone';
 import Fuse from 'fuse.js';
+// TEXT-TO-WORKFLOW IMPORTS
+import { KnowledgeCoreService } from '@/services/ai/services/knowledge-core.service';
+import { TextToWorkflowService } from '@/services/ai/services/text-to-workflow.service';
+import { workflowGenerationRequestSchema } from '@/services/ai/schemas/textToWorkflow';
+import type {
+	WorkflowGenerationRequest,
+	GeneratedWorkflow,
+} from '@/services/ai/schemas/textToWorkflow';
 interface APIKnowledgebaseService {
 	id: string;
 	title: string;
@@ -35,6 +43,10 @@ export class AIService {
 	public pinecone: Pinecone;
 
 	private jsonOutputParser = new JsonOutputFunctionsParser();
+
+	// TEXT-TO-WORKFLOW SERVICES
+	public knowledgeCore: KnowledgeCoreService;
+	public textToWorkflow: TextToWorkflowService;
 
 	constructor() {
 		const providerName = config.getEnv('ai.provider');
@@ -58,6 +70,9 @@ export class AIService {
 				apiKey: pineconeApiKey,
 			});
 		}
+
+		// Initialize text-to-workflow services
+		this.initializeTextToWorkflowServices();
 	}
 
 	async prompt(messages: BaseMessageLike[], options?: BaseChatModelCallOptions) {
@@ -188,5 +203,63 @@ export class AIService {
 		if (!this.provider) {
 			throw new ApplicationError('No AI provider has been configured.');
 		}
+	}
+
+	// TEXT-TO-WORKFLOW INITIALIZATION
+	private initializeTextToWorkflowServices() {
+		if (this.provider && this.pinecone) {
+			this.knowledgeCore = new KnowledgeCoreService(this.pinecone, this.provider);
+			this.textToWorkflow = new TextToWorkflowService(this.knowledgeCore, this);
+		}
+	}
+
+	/**
+	 * Generate n8n workflow from natural language description
+	 * Implements the 3-stage pipeline from the research framework
+	 */
+	async generateWorkflow(request: WorkflowGenerationRequest): Promise<GeneratedWorkflow> {
+		this.checkRequirements();
+
+		if (!this.textToWorkflow) {
+			throw new ApplicationError(
+				'Text-to-workflow service is not available. Please ensure Pinecone is configured.',
+			);
+		}
+
+		// Validate request
+		const validatedRequest = workflowGenerationRequestSchema.parse(request);
+
+		return await this.textToWorkflow.generateWorkflow(validatedRequest);
+	}
+
+	/**
+	 * Get the status of text-to-workflow services
+	 */
+	getTextToWorkflowStatus() {
+		if (!this.textToWorkflow) {
+			return {
+				available: false,
+				reason: 'Text-to-workflow service not initialized',
+			};
+		}
+
+		return {
+			available: true,
+			...this.textToWorkflow.getServiceStatus(),
+		};
+	}
+
+	/**
+	 * Manually sync the knowledge core (for admin/debugging purposes)
+	 */
+	async syncKnowledgeCore() {
+		this.checkRequirements();
+
+		if (!this.knowledgeCore) {
+			throw new ApplicationError('Knowledge Core service is not available.');
+		}
+
+		await this.knowledgeCore.syncNodeDefinitions();
+		return this.knowledgeCore.getKnowledgeCoreStatus();
 	}
 }

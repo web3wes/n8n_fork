@@ -10,6 +10,7 @@ import type {
 	INodeTypeNameVersion,
 	IUser,
 } from 'n8n-workflow';
+import type { WorkflowGenerationRequest } from '@/services/ai/schemas/textToWorkflow';
 
 import { Expose } from 'class-transformer';
 import { IsBoolean, IsEmail, IsIn, IsOptional, IsString, Length } from 'class-validator';
@@ -175,6 +176,7 @@ export function hasSharing(
 
 export declare namespace AIRequest {
 	export type GenerateCurl = AuthenticatedRequest<{}, {}, AIGenerateCurlPayload>;
+	export type GenerateWorkflow = AuthenticatedRequest<{}, {}, WorkflowGenerationRequest>;
 }
 
 export interface AIGenerateCurlPayload {
