@@ -1,0 +1,56 @@
+{
+  "name": "Generated Workflow",
+  "active": false,
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Slack Trigger 1",
+      "type": "n8n-nodes-base.slackTrigger",
+      "typeVersion": 1,
+      "position": [
+        200,
+        200
+      ],
+      "parameters": {
+        "options": {}
+      }
+    },
+    {
+      "id": "2",
+      "name": "Slack Trigger 2",
+      "type": "n8n-nodes-base.slackTrigger",
+      "typeVersion": 1,
+      "position": [
+        400,
+        200
+      ],
+      "parameters": {
+        "options": {}
+      }
+    },
+    {
+      "id": "3",
+      "name": "Slack Trigger 3",
+      "type": "n8n-nodes-base.slackTrigger",
+      "typeVersion": 1,
+      "position": [
+        600,
+        200
+      ],
+      "parameters": {
+        "options": {}
+      }
+    }
+  ],
+  "connections": {},
+  "settings": {},
+  "meta": {
+    "instanceId": "text-to-workflow-generated"
+  },
+  "tags": [
+    "text-to-workflow"
+  ],
+  "requiredCredentials": [],
+  "versionId": "daf6cd4b-e813-41fd-ba9b-114ded315662",
+  "id": "4ulvb69c11"
+}

@@ -543,7 +543,11 @@ Generate the complete valid n8n workflow JSON:`;
 				id: parsed.id || Math.random().toString(36).substr(2, 16),
 			};
 
-			return workflow;
+			// Apply deep sanitization for complex workflows (especially those with many nodes)
+			const sanitizedWorkflow =
+				validatedNodes.length > 3 ? this.deepSanitizeComplexWorkflow(workflow) : workflow;
+
+			return sanitizedWorkflow;
 		} catch (error) {
 			console.error('❌ Workflow parsing failed:', error);
 
@@ -759,9 +763,228 @@ Generate the complete valid n8n workflow JSON:`;
 			} else if (typeof value === 'object' && !Array.isArray(value)) {
 				// Recursively sanitize nested objects
 				sanitized[key] = this.sanitizeParameters(value);
+			} else if (typeof value === 'string') {
+				// Ensure string values are not undefined before operations that might call trim()
+				sanitized[key] = value || '';
 			} else {
 				// Keep valid values as-is
 				sanitized[key] = value;
+			}
+		}
+
+		return sanitized;
+	}
+
+	/**
+	 * Deep sanitization for complex workflows with many steps and integrations
+	 * Specifically handles common issues in large product/ecommerce workflows
+	 */
+	private deepSanitizeComplexWorkflow(workflow: GeneratedWorkflow): GeneratedWorkflow {
+		const sanitized = { ...workflow };
+
+		// Ensure workflow-level properties are strings
+		sanitized.name = sanitized.name || 'Generated Workflow';
+		sanitized.id = sanitized.id || Math.random().toString(36).substr(2, 16);
+		sanitized.versionId = sanitized.versionId || this.generateUUID();
+
+		// Deep sanitize each node
+		if (sanitized.nodes) {
+			sanitized.nodes = sanitized.nodes.map((node, index) => {
+				const sanitizedNode = { ...node };
+
+				// Ensure core node properties are strings
+				sanitizedNode.id = sanitizedNode.id || this.generateUUID();
+				sanitizedNode.name = sanitizedNode.name || `Node ${index + 1}`;
+				sanitizedNode.type = sanitizedNode.type || 'n8n-nodes-base.manualTrigger';
+
+				// Deep sanitize node parameters
+				sanitizedNode.parameters = this.deepSanitizeNodeParameters(
+					sanitizedNode.parameters || {},
+					sanitizedNode.type,
+				);
+
+				// Ensure credentials object is properly structured
+				if (sanitizedNode.credentials) {
+					sanitizedNode.credentials = this.sanitizeCredentials(sanitizedNode.credentials);
+				}
+
+				return sanitizedNode;
+			});
+		}
+
+		// Ensure connections object exists
+		sanitized.connections = sanitized.connections || {};
+
+		// Ensure metadata is properly structured
+		sanitized.meta = sanitized.meta || { instanceId: 'text-to-workflow-generated' };
+		sanitized.settings = sanitized.settings || {};
+		sanitized.tags = Array.isArray(sanitized.tags) ? sanitized.tags : ['text-to-workflow'];
+
+		return sanitized;
+	}
+
+	/**
+	 * Deep sanitize node parameters with special handling for complex node types
+	 */
+	private deepSanitizeNodeParameters(
+		params: Record<string, any>,
+		nodeType: string,
+	): Record<string, any> {
+		const sanitized = this.sanitizeParameters(params);
+
+		// Special handling for complex node types commonly found in large workflows
+		switch (nodeType) {
+			case 'n8n-nodes-base.airtable':
+				return this.sanitizeAirtableParams(sanitized);
+			case 'n8n-nodes-base.googleSheets':
+				return this.sanitizeGoogleSheetsParams(sanitized);
+			case 'n8n-nodes-base.slack':
+				return this.sanitizeSlackParams(sanitized);
+			case 'n8n-nodes-base.webhook':
+				return this.sanitizeWebhookParams(sanitized);
+			case 'n8n-nodes-base.httpRequest':
+				return this.sanitizeHttpRequestParams(sanitized);
+			case 'n8n-nodes-base.switch':
+				return this.sanitizeSwitchParams(sanitized);
+			case 'n8n-nodes-base.if':
+				return this.sanitizeIfParams(sanitized);
+			case 'n8n-nodes-base.set':
+				return this.sanitizeSetParams(sanitized);
+			case 'n8n-nodes-base.function':
+				return this.sanitizeFunctionParams(sanitized);
+			default:
+				return sanitized;
+		}
+	}
+
+	private sanitizeAirtableParams(params: Record<string, any>): Record<string, any> {
+		return {
+			...params,
+			operation: params.operation || 'list',
+			application: params.application || 'base',
+			table: params.table || '',
+			baseId: params.baseId || '',
+			tableId: params.tableId || '',
+			options: params.options || {},
+		};
+	}
+
+	private sanitizeGoogleSheetsParams(params: Record<string, any>): Record<string, any> {
+		return {
+			...params,
+			authentication: params.authentication || 'serviceAccount',
+			resource: params.resource || 'sheet',
+			operation: params.operation || 'read',
+			documentId: params.documentId || '',
+			sheetName: params.sheetName || 'Sheet1',
+			options: params.options || {},
+		};
+	}
+
+	private sanitizeSlackParams(params: Record<string, any>): Record<string, any> {
+		return {
+			...params,
+			authentication: params.authentication || 'accessToken',
+			resource: params.resource || 'message',
+			operation: params.operation || 'post',
+			channel: params.channel || '#general',
+			text: params.text || '',
+			options: params.options || {},
+		};
+	}
+
+	private sanitizeWebhookParams(params: Record<string, any>): Record<string, any> {
+		return {
+			...params,
+			path: params.path || 'webhook',
+			httpMethod: params.httpMethod || 'GET',
+			responseMode: params.responseMode || 'responseNode',
+			options: params.options || {},
+		};
+	}
+
+	private sanitizeHttpRequestParams(params: Record<string, any>): Record<string, any> {
+		return {
+			...params,
+			method: params.method || 'GET',
+			url: params.url || 'https://api.example.com',
+			options: params.options || {},
+			headers: params.headers || {},
+			qs: params.qs || {},
+		};
+	}
+
+	private sanitizeSwitchParams(params: Record<string, any>): Record<string, any> {
+		const sanitized: Record<string, any> = {
+			...params,
+			dataType: params.dataType || 'string',
+			value1: params.value1 || '={{ $json.field }}',
+			options: params.options || {},
+		};
+
+		// Ensure rules structure is correct for Switch nodes
+		if (!sanitized.rules || !sanitized.rules.rules || !Array.isArray(sanitized.rules.rules)) {
+			sanitized.rules = {
+				rules: [{ value2: 'value1' }, { value2: 'value2' }, { value2: 'value3' }],
+			};
+		}
+
+		return sanitized;
+	}
+
+	private sanitizeIfParams(params: Record<string, any>): Record<string, any> {
+		const sanitized: Record<string, any> = {
+			...params,
+			options: params.options || {},
+		};
+
+		// Ensure conditions structure is correct
+		if (!sanitized.conditions || typeof sanitized.conditions !== 'object') {
+			sanitized.conditions = {
+				boolean: [],
+				number: [],
+				string: [],
+			};
+		}
+
+		return sanitized;
+	}
+
+	private sanitizeSetParams(params: Record<string, any>): Record<string, any> {
+		const sanitized: Record<string, any> = {
+			...params,
+			options: params.options || {},
+		};
+
+		// Ensure values structure is correct for Set nodes
+		if (!sanitized.values || typeof sanitized.values !== 'object') {
+			sanitized.values = {
+				string: [{ name: 'field', value: 'value' }],
+			};
+		}
+
+		return sanitized;
+	}
+
+	private sanitizeFunctionParams(params: Record<string, any>): Record<string, any> {
+		return {
+			...params,
+			functionCode: params.functionCode || 'return items;',
+			options: params.options || {},
+		};
+	}
+
+	private sanitizeCredentials(credentials: Record<string, any>): Record<string, any> {
+		const sanitized: Record<string, any> = {};
+
+		for (const [key, value] of Object.entries(credentials)) {
+			if (typeof value === 'object' && value !== null) {
+				sanitized[key] = {
+					id: value.id || '',
+					name: value.name || '',
+				};
+			} else {
+				sanitized[key] = value || '';
 			}
 		}
 

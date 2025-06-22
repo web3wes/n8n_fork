@@ -660,12 +660,9 @@ export class KnowledgeCoreService {
 		const glob = require('glob');
 
 		try {
-			// Search for workflow files in common locations
+			// Search for dedicated workflow files only
 			const patterns = [
-				'packages/nodes-base/**/*.workflow.json',
-				'packages/nodes-base/**/test/**/*.json',
-				'cypress/fixtures/**/*.json',
-				'**/*workflow*.json',
+				'packages/nodes-base/**/*.workflow.json', // 186 dedicated workflow files (100% workflows)
 			];
 
 			const files: string[] = [];
@@ -675,7 +672,7 @@ export class KnowledgeCoreService {
 					cwd: process.cwd(),
 					ignore: ['node_modules/**', 'dist/**', '.git/**'],
 				});
-				files.push(...matches.map((f) => path.resolve(f)));
+				files.push(...matches.map((f: string) => path.resolve(f)));
 			}
 
 			// Remove duplicates and filter for actual workflow files
@@ -686,7 +683,13 @@ export class KnowledgeCoreService {
 					const content = fs.readFileSync(file, 'utf8');
 					const json = JSON.parse(content);
 					// Check if it looks like an n8n workflow
-					return json.nodes && json.connections && Array.isArray(json.nodes);
+					return (
+						json.nodes &&
+						json.connections &&
+						Array.isArray(json.nodes) &&
+						json.nodes.length > 0 &&
+						json.nodes.some((node: any) => node.type && node.type.startsWith('n8n-nodes-base.'))
+					);
 				} catch {
 					return false;
 				}
@@ -713,11 +716,11 @@ export class KnowledgeCoreService {
 
 			const nodes = workflow.nodes;
 			const connections = workflow.connections || {};
-			const nodeTypes = nodes.map((n) => n.type || 'unknown');
+			const nodeTypes = nodes.map((n: any) => n.type || 'unknown');
 			const nodeCount = nodes.length;
 
 			// Find Switch nodes and analyze their connections
-			const switchNodes = nodes.filter((n) => n.type === 'n8n-nodes-base.switch');
+			const switchNodes = nodes.filter((n: any) => n.type === 'n8n-nodes-base.switch');
 			const switchCount = switchNodes.length;
 
 			// Analyze connection patterns
@@ -731,7 +734,7 @@ export class KnowledgeCoreService {
 					if (switchConnections && switchConnections.main) {
 						const outputCount = switchConnections.main.length;
 						const filledOutputs = switchConnections.main.filter(
-							(output) => output && output.length > 0,
+							(output: any) => output && output.length > 0,
 						).length;
 
 						if (filledOutputs === outputCount && outputCount > 1) {
@@ -752,14 +755,16 @@ export class KnowledgeCoreService {
 
 			// Create description
 			const fileName = filePath.split('/').pop() || 'unknown';
-			const uniqueNodeTypes = [...new Set(nodeTypes.map((t) => t.replace('n8n-nodes-base.', '')))];
+			const uniqueNodeTypes = [
+				...new Set(nodeTypes.map((t: string) => t.replace('n8n-nodes-base.', ''))),
+			];
 
 			let description = `Real n8n workflow from ${fileName}: `;
 			description += `${nodeCount} nodes (${uniqueNodeTypes.slice(0, 5).join(', ')})`;
 
 			if (switchCount > 0) {
 				const switchDetails = switchNodes
-					.map((s) => {
+					.map((s: any) => {
 						const rules = s.parameters?.rules?.rules || [];
 						const typeVersion = s.typeVersion || 1;
 						return `Switch V${typeVersion} with ${rules.length} rules`;

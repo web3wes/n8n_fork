@@ -1,0 +1,108 @@
+{
+	"name": "Customer Data Processing and Email Notification Workflow - FIXED",
+	"active": false,
+	"nodes": [
+		{
+			"id": "1",
+			"name": "Webhook",
+			"type": "n8n-nodes-base.webhook",
+			"typeVersion": 1,
+			"position": [200, 300],
+			"parameters": {
+				"path": "customer-data",
+				"method": "POST",
+				"responseMode": "responseNode",
+				"httpMethod": "POST",
+				"options": {}
+			}
+		},
+		{
+			"id": "2",
+			"name": "Check Customer Data",
+			"type": "n8n-nodes-base.if",
+			"typeVersion": 1,
+			"position": [400, 300],
+			"parameters": {
+				"conditions": {
+					"boolean": [
+						{
+							"value1": "={{$json[\"customerData\"][\"isValid\"]}}",
+							"value2": true,
+							"operation": "equal"
+						}
+					],
+					"number": [],
+					"string": []
+				},
+				"options": {}
+			}
+		},
+		{
+			"id": "3",
+			"name": "Send Success Email",
+			"type": "n8n-nodes-base.emailSend",
+			"typeVersion": 1,
+			"position": [600, 200],
+			"parameters": {
+				"fromEmail": "no-reply@example.com",
+				"toEmail": "={{$json[\"customerData\"][\"email\"]}}",
+				"subject": "Data Received Successfully",
+				"text": "Thank you for submitting your data. It has been processed successfully.",
+				"options": {}
+			}
+		},
+		{
+			"id": "4",
+			"name": "Send Error Email",
+			"type": "n8n-nodes-base.emailSend",
+			"typeVersion": 1,
+			"position": [600, 400],
+			"parameters": {
+				"fromEmail": "no-reply@example.com",
+				"toEmail": "={{$json[\"customerData\"][\"email\"]}}",
+				"subject": "Data Processing Error",
+				"text": "There was an error processing your data. Please check and resubmit.",
+				"options": {}
+			}
+		}
+	],
+	"connections": {
+		"Webhook": {
+			"main": [
+				[
+					{
+						"node": "Check Customer Data",
+						"type": "main",
+						"index": 0
+					}
+				]
+			]
+		},
+		"Check Customer Data": {
+			"main": [
+				[
+					{
+						"node": "Send Success Email",
+						"type": "main",
+						"index": 0
+					}
+				],
+				[
+					{
+						"node": "Send Error Email",
+						"type": "main",
+						"index": 0
+					}
+				]
+			]
+		}
+	},
+	"settings": {},
+	"meta": {
+		"instanceId": "text-to-workflow-generated"
+	},
+	"tags": ["text-to-workflow"],
+	"requiredCredentials": ["emailSmtp"],
+	"versionId": "f5283298-8056-4db1-bcc5-44ddafc7c556-fixed",
+	"id": "4i8054m5wg7-fixed"
+}

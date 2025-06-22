@@ -1,0 +1,94 @@
+{
+  "name": "Monitor Google Drive for New Files and Process with OpenAI",
+  "active": false,
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Google Drive Trigger",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "watchFor": "file",
+        "driveId": "",
+        "folderId": "",
+        "includeTeamDrives": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "2",
+      "name": "Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 1,
+      "position": [
+        400,
+        300
+      ],
+      "parameters": {
+        "operation": "download",
+        "fileId": "={{$json[\"id\"]}}",
+        "binaryPropertyName": "data",
+        "options": {}
+      }
+    },
+    {
+      "id": "3",
+      "name": "OpenAI",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        600,
+        300
+      ],
+      "parameters": {
+        "resource": "completion",
+        "model": "text-davinci-003",
+        "prompt": "Process the content of the file: {{$binary.data}}",
+        "maxTokens": 150,
+        "operation": "complete",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "meta": {
+    "instanceId": "text-to-workflow-generated"
+  },
+  "tags": [
+    "text-to-workflow"
+  ],
+  "requiredCredentials": [
+    "googleDriveOAuth2Api",
+    "openAiApi"
+  ],
+  "versionId": "87141de4-6db5-4faa-aad9-e87519d2c5f1",
+  "id": "ug2bl78dxr9"
+}

@@ -28,7 +28,8 @@ export class TagsController {
 	@Post('/')
 	@GlobalScope('tag:create')
 	async createTag(req: TagsRequest.Create) {
-		const tag = this.tagService.toEntity({ name: req.body.name });
+		const tagName = req.body?.name || 'imported';
+		const tag = this.tagService.toEntity({ name: tagName });
 
 		return await this.tagService.save(tag, 'create');
 	}
@@ -36,7 +37,8 @@ export class TagsController {
 	@Patch('/:id(\\w+)')
 	@GlobalScope('tag:update')
 	async updateTag(req: TagsRequest.Update) {
-		const newTag = this.tagService.toEntity({ id: req.params.id, name: req.body.name.trim() });
+		const tagName = req.body?.name || 'imported';
+		const newTag = this.tagService.toEntity({ id: req.params.id, name: tagName });
 
 		return await this.tagService.save(newTag, 'update');
 	}

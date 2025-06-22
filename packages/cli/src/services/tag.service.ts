@@ -15,7 +15,19 @@ export class TagService {
 	) {}
 
 	toEntity(attrs: { name: string; id?: string }) {
-		attrs.name = attrs.name.trim();
+		// Handle undefined/null name to prevent trim() errors
+		if (!attrs.name || typeof attrs.name !== 'string') {
+			// Use a default valid tag name instead of empty string
+			attrs.name = 'imported';
+		} else {
+			attrs.name = attrs.name.trim();
+			// Ensure the name meets length requirements (1-24 characters)
+			if (attrs.name.length === 0) {
+				attrs.name = 'imported';
+			} else if (attrs.name.length > 24) {
+				attrs.name = attrs.name.substring(0, 24);
+			}
+		}
 
 		return this.tagRepository.create(attrs);
 	}

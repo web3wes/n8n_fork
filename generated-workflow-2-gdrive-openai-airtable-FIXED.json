@@ -1,0 +1,107 @@
+{
+	"name": "Monitor Google Drive for New Files, Analyze with OpenAI, and Save Results to Airtable - FIXED",
+	"active": false,
+	"nodes": [
+		{
+			"id": "1",
+			"name": "Google Drive Trigger",
+			"type": "n8n-nodes-base.googleDriveTrigger",
+			"typeVersion": 1,
+			"position": [200, 300],
+			"parameters": {
+				"watchFor": "file",
+				"driveId": "root",
+				"folderId": "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms",
+				"options": {}
+			}
+		},
+		{
+			"id": "2",
+			"name": "Google Drive",
+			"type": "n8n-nodes-base.googleDrive",
+			"typeVersion": 1,
+			"position": [400, 300],
+			"parameters": {
+				"operation": "download",
+				"fileId": "={{$json[\"id\"]}}",
+				"options": {}
+			}
+		},
+		{
+			"id": "3",
+			"name": "OpenAI",
+			"type": "n8n-nodes-base.openAi",
+			"typeVersion": 1,
+			"position": [600, 300],
+			"parameters": {
+				"model": "gpt-3.5-turbo",
+				"prompt": "Analyze the following content: {{$json[\"data\"]}}",
+				"maxTokens": 150,
+				"resource": "text",
+				"operation": "complete",
+				"options": {}
+			}
+		},
+		{
+			"id": "4",
+			"name": "Airtable",
+			"type": "n8n-nodes-base.airtable",
+			"typeVersion": 1,
+			"position": [800, 300],
+			"parameters": {
+				"operation": "create",
+				"baseId": "appXXXXXXXXXXXXXX",
+				"tableId": "tblXXXXXXXXXXXXXX",
+				"fields": {
+					"Analysis Result": "={{$json[\"choices\"][0][\"text\"]}}"
+				},
+				"application": "base",
+				"table": "Main Table",
+				"options": {}
+			}
+		}
+	],
+	"connections": {
+		"Google Drive Trigger": {
+			"main": [
+				[
+					{
+						"node": "Google Drive",
+						"type": "main",
+						"index": 0
+					}
+				]
+			]
+		},
+		"Google Drive": {
+			"main": [
+				[
+					{
+						"node": "OpenAI",
+						"type": "main",
+						"index": 0
+					}
+				]
+			]
+		},
+		"OpenAI": {
+			"main": [
+				[
+					{
+						"node": "Airtable",
+						"type": "main",
+						"index": 0
+					}
+				]
+			]
+		}
+	},
+	"settings": {},
+	"meta": {
+		"instanceId": "text-to-workflow-generated"
+	},
+	"tags": ["text-to-workflow"],
+	"requiredCredentials": ["googleDriveOAuth2Api", "openAiApi", "airtableApi"],
+	"versionId": "ddfdf332-128e-4205-a726-72cca9f273a3-fixed",
+	"id": "wgj35xghnao-fixed"
+}

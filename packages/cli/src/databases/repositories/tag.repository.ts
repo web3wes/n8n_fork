@@ -28,7 +28,7 @@ export class TagRepository extends Repository<TagEntity> {
 		for (let i = 0; i < workflow.tags.length; i++) {
 			const importTag = workflow.tags[i];
 
-			if (!importTag.name) continue;
+			if (!importTag.name || importTag.name.trim().length === 0) continue;
 
 			const identicalMatch = dbTags.find(
 				(dbTag) =>
