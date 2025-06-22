@@ -1,0 +1,165 @@
+{
+  "name": "Customer Support Workflow with Sentiment Analysis and AI Auto-Response",
+  "active": false,
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Customer IO Trigger",
+      "type": "n8n-nodes-base.customerIoTrigger",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "options": {}
+      }
+    },
+    {
+      "id": "2",
+      "name": "Sentiment Analysis",
+      "type": "n8n-nodes-base.sentimentAnalysis",
+      "typeVersion": 1,
+      "position": [
+        400,
+        300
+      ],
+      "parameters": {
+        "text": "={{$json[\"message\"]}}",
+        "language": "en",
+        "options": {}
+      }
+    },
+    {
+      "id": "3",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        600,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json[\"sentiment\"]}}",
+              "operation": "equal",
+              "value2": "negative"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "4",
+      "name": "AI Response",
+      "type": "n8n-nodes-base.aiResponse",
+      "typeVersion": 1,
+      "position": [
+        800,
+        200
+      ],
+      "parameters": {
+        "input": "={{$json[\"message\"]}}",
+        "options": {}
+      }
+    },
+    {
+      "id": "5",
+      "name": "Customer Messenger",
+      "type": "n8n-nodes-base.customerMessenger",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        200
+      ],
+      "parameters": {
+        "message": "={{$json[\"aiResponse\"]}}",
+        "channel": "general",
+        "options": {}
+      }
+    },
+    {
+      "id": "6",
+      "name": "Human Agent Notification",
+      "type": "n8n-nodes-base.humanAgentNotification",
+      "typeVersion": 1,
+      "position": [
+        800,
+        400
+      ],
+      "parameters": {
+        "message": "Negative sentiment detected. Please review the customer message: {{$json[\"message\"]}}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "1": {
+      "main": [
+        [
+          {
+            "node": "2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2": {
+      "main": [
+        [
+          {
+            "node": "3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3": {
+      "main": [
+        [
+          {
+            "node": "4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4": {
+      "main": [
+        [
+          {
+            "node": "5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "meta": {
+    "instanceId": "text-to-workflow-generated"
+  },
+  "tags": [
+    "text-to-workflow"
+  ],
+  "requiredCredentials": [
+    "customerIoApi",
+    "aiServiceApi"
+  ],
+  "versionId": "a8f81d4f-660c-4738-a54d-5378d4e52231",
+  "id": "z2ye2gg3n1l"
+}

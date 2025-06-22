@@ -1,0 +1,146 @@
+{
+	"name": "HTTP API Integration Workflow",
+	"nodes": [
+		{
+			"id": "a1b2c3d4-e5f6-4789-a012-123456789abc",
+			"name": "Schedule Trigger",
+			"type": "n8n-nodes-base.cron",
+			"typeVersion": 1,
+			"position": [200, 300],
+			"parameters": {
+				"triggerTimes": {
+					"item": [
+						{
+							"mode": "everyMinute"
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "b2c3d4e5-f6a7-4890-b123-234567890def",
+			"name": "Fetch Weather Data",
+			"type": "n8n-nodes-base.httpRequest",
+			"typeVersion": 4,
+			"position": [400, 300],
+			"parameters": {
+				"method": "GET",
+				"url": "https://api.openweathermap.org/data/2.5/weather",
+				"authentication": "none",
+				"sendQuery": true,
+				"queryParameters": {
+					"parameters": [
+						{
+							"name": "q",
+							"value": "London"
+						},
+						{
+							"name": "appid",
+							"value": "your_api_key_here"
+						},
+						{
+							"name": "units",
+							"value": "metric"
+						}
+					]
+				},
+				"options": {}
+			}
+		},
+		{
+			"id": "c3d4e5f6-a7b8-4901-c234-345678901ghi",
+			"name": "Process Weather",
+			"type": "n8n-nodes-base.set",
+			"typeVersion": 1,
+			"position": [600, 300],
+			"parameters": {
+				"values": {
+					"string": [
+						{
+							"name": "city",
+							"value": "{{$json.name}}"
+						},
+						{
+							"name": "temperature",
+							"value": "{{$json.main.temp}}°C"
+						},
+						{
+							"name": "description",
+							"value": "{{$json.weather[0].description}}"
+						}
+					]
+				},
+				"options": {}
+			}
+		},
+		{
+			"id": "d4e5f6a7-b8c9-4901-c234-345678901jkl",
+			"name": "Send to Webhook",
+			"type": "n8n-nodes-base.httpRequest",
+			"typeVersion": 4,
+			"position": [800, 300],
+			"parameters": {
+				"method": "POST",
+				"url": "https://webhook.site/your-unique-url",
+				"authentication": "none",
+				"sendBody": true,
+				"bodyParameters": {
+					"parameters": [
+						{
+							"name": "weather_update",
+							"value": "Weather in {{$json.city}}: {{$json.temperature}}, {{$json.description}}"
+						},
+						{
+							"name": "timestamp",
+							"value": "{{$now}}"
+						}
+					]
+				},
+				"options": {}
+			}
+		}
+	],
+	"connections": {
+		"Schedule Trigger": {
+			"main": [
+				[
+					{
+						"node": "Fetch Weather Data",
+						"type": "main",
+						"index": 0
+					}
+				]
+			]
+		},
+		"Fetch Weather Data": {
+			"main": [
+				[
+					{
+						"node": "Process Weather",
+						"type": "main",
+						"index": 0
+					}
+				]
+			]
+		},
+		"Process Weather": {
+			"main": [
+				[
+					{
+						"node": "Send to Webhook",
+						"type": "main",
+						"index": 0
+					}
+				]
+			]
+		}
+	},
+	"active": false,
+	"settings": {},
+	"versionId": "f6a7b8c9-d0e1-4234-f567-678901234pqr",
+	"id": "http123",
+	"meta": {
+		"instanceId": "95977dc4769098fc608439605527ee75d23f10d551aed6b87a3eea1a252c0ba9"
+	},
+	"tags": ["http", "api", "schedule"]
+}

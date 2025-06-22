@@ -1,0 +1,79 @@
+{
+	"name": "Google Sheets Data Processing",
+	"nodes": [
+		{
+			"id": "a1b2c3d4-e5f6-4789-a012-123456789abc",
+			"name": "Manual Trigger",
+			"type": "n8n-nodes-base.manualTrigger",
+			"typeVersion": 1,
+			"position": [200, 300],
+			"parameters": {}
+		},
+		{
+			"id": "b2c3d4e5-f6a7-4890-b123-234567890def",
+			"name": "Google Sheets",
+			"type": "n8n-nodes-base.googleSheets",
+			"typeVersion": 4,
+			"position": [400, 300],
+			"parameters": {
+				"authentication": "serviceAccount",
+				"resource": "sheet",
+				"operation": "read",
+				"documentId": "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms",
+				"sheetName": "Sheet1",
+				"range": "A1:E10",
+				"options": {}
+			}
+		},
+		{
+			"id": "c3d4e5f6-a7b8-4901-c234-345678901ghi",
+			"name": "Set",
+			"type": "n8n-nodes-base.set",
+			"typeVersion": 1,
+			"position": [600, 300],
+			"parameters": {
+				"values": {
+					"string": [
+						{
+							"name": "processed",
+							"value": "Data from Google Sheets: {{$json.A}}"
+						}
+					]
+				},
+				"options": {}
+			}
+		}
+	],
+	"connections": {
+		"Manual Trigger": {
+			"main": [
+				[
+					{
+						"node": "Google Sheets",
+						"type": "main",
+						"index": 0
+					}
+				]
+			]
+		},
+		"Google Sheets": {
+			"main": [
+				[
+					{
+						"node": "Set",
+						"type": "main",
+						"index": 0
+					}
+				]
+			]
+		}
+	},
+	"active": false,
+	"settings": {},
+	"versionId": "d4e5f6a7-b8c9-4012-d345-456789012jkl",
+	"id": "sheets123",
+	"meta": {
+		"instanceId": "95977dc4769098fc608439605527ee75d23f10d551aed6b87a3eea1a252c0ba9"
+	},
+	"tags": []
+}

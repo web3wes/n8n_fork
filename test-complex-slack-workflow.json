@@ -1,0 +1,115 @@
+{
+	"name": "Complex Slack Notification Workflow",
+	"nodes": [
+		{
+			"id": "a1b2c3d4-e5f6-4789-a012-123456789abc",
+			"name": "Webhook",
+			"type": "n8n-nodes-base.webhook",
+			"typeVersion": 1,
+			"position": [200, 300],
+			"parameters": {
+				"path": "form-submission",
+				"responseMode": "responseNode",
+				"httpMethod": "POST",
+				"options": {}
+			}
+		},
+		{
+			"id": "b2c3d4e5-f6a7-4890-b123-234567890def",
+			"name": "Set Data",
+			"type": "n8n-nodes-base.set",
+			"typeVersion": 1,
+			"position": [400, 300],
+			"parameters": {
+				"values": {
+					"string": [
+						{
+							"name": "message",
+							"value": "New form submission from {{$json.name}}: {{$json.email}}"
+						},
+						{
+							"name": "priority",
+							"value": "{{$json.urgent ? 'HIGH' : 'NORMAL'}}"
+						}
+					]
+				},
+				"options": {}
+			}
+		},
+		{
+			"id": "c3d4e5f6-a7b8-4901-c234-345678901ghi",
+			"name": "Slack Notification",
+			"type": "n8n-nodes-base.slack",
+			"typeVersion": 2,
+			"position": [600, 300],
+			"parameters": {
+				"authentication": "accessToken",
+				"resource": "message",
+				"operation": "post",
+				"channel": "#notifications",
+				"text": "🔔 {{$json.message}}\n\nPriority: {{$json.priority}}",
+				"attachments": [],
+				"otherOptions": {
+					"username": "n8n-bot",
+					"icon_emoji": ":robot_face:"
+				},
+				"options": {}
+			}
+		},
+		{
+			"id": "d4e5f6a7-b8c9-4901-c234-345678901jkl",
+			"name": "Respond to Webhook",
+			"type": "n8n-nodes-base.respondToWebhook",
+			"typeVersion": 1,
+			"position": [800, 300],
+			"parameters": {
+				"responseBody": "Thank you! Your submission has been received and our team has been notified.",
+				"responseCode": 200,
+				"options": {}
+			}
+		}
+	],
+	"connections": {
+		"Webhook": {
+			"main": [
+				[
+					{
+						"node": "Set Data",
+						"type": "main",
+						"index": 0
+					}
+				]
+			]
+		},
+		"Set Data": {
+			"main": [
+				[
+					{
+						"node": "Slack Notification",
+						"type": "main",
+						"index": 0
+					}
+				]
+			]
+		},
+		"Slack Notification": {
+			"main": [
+				[
+					{
+						"node": "Respond to Webhook",
+						"type": "main",
+						"index": 0
+					}
+				]
+			]
+		}
+	},
+	"active": false,
+	"settings": {},
+	"versionId": "e5f6a7b8-c9d0-4123-e456-567890123mno",
+	"id": "complex123",
+	"meta": {
+		"instanceId": "95977dc4769098fc608439605527ee75d23f10d551aed6b87a3eea1a252c0ba9"
+	},
+	"tags": ["complex", "slack", "webhook"]
+}

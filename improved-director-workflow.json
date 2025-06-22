@@ -1,0 +1,98 @@
+{
+  "name": "Request Complexity Routing Workflow",
+  "active": false,
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Complexity Agent",
+      "type": "n8n-nodes-langchain.agent",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "input": "request_data",
+        "criteria": "complexity",
+        "sessionId": "",
+        "prompt": "",
+        "options": {}
+      }
+    },
+    {
+      "id": "2",
+      "name": "Simple Request Handler",
+      "type": "n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1,
+      "position": [
+        400,
+        200
+      ],
+      "parameters": {
+        "workflowId": "simple_workflow_id",
+        "options": {}
+      }
+    },
+    {
+      "id": "3",
+      "name": "Moderate Request Handler",
+      "type": "n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1,
+      "position": [
+        400,
+        400
+      ],
+      "parameters": {
+        "workflowId": "moderate_workflow_id",
+        "options": {}
+      }
+    },
+    {
+      "id": "4",
+      "name": "Complex Request Handler",
+      "type": "n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1,
+      "position": [
+        400,
+        600
+      ],
+      "parameters": {
+        "workflowId": "complex_workflow_id",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "1": {
+      "main": [
+        [
+          {
+            "node": "2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "meta": {
+    "instanceId": "text-to-workflow-generated"
+  },
+  "tags": [
+    "text-to-workflow"
+  ],
+  "requiredCredentials": [],
+  "versionId": "71e134bb-6691-40a1-a584-5dc255ec0036",
+  "id": "rwbik9hegbg"
+}

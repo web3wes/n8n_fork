@@ -259,7 +259,12 @@ export class AIService {
 			throw new ApplicationError('Knowledge Core service is not available.');
 		}
 
-		await this.knowledgeCore.syncNodeDefinitions();
-		return this.knowledgeCore.getKnowledgeCoreStatus();
+		try {
+			await this.knowledgeCore.syncNodeDefinitions();
+			return this.knowledgeCore.getKnowledgeCoreStatus();
+		} catch (error) {
+			console.error('❌ Detailed sync error:', error);
+			throw new ApplicationError(`Knowledge Core sync failed: ${error.message}`);
+		}
 	}
 }

@@ -1,0 +1,96 @@
+{
+  "name": "Webhook to OpenAI to Slack Workflow",
+  "active": false,
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "path": "webhook-path",
+        "method": "POST",
+        "responseMode": "responseNode",
+        "httpMethod": "GET",
+        "options": {}
+      }
+    },
+    {
+      "id": "2",
+      "name": "OpenAI",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        400,
+        300
+      ],
+      "parameters": {
+        "model": "text-davinci-003",
+        "prompt": "{{$json['body']['text']}}",
+        "maxTokens": 150,
+        "resource": "text",
+        "operation": "complete",
+        "options": {}
+      }
+    },
+    {
+      "id": "3",
+      "name": "Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position": [
+        600,
+        300
+      ],
+      "parameters": {
+        "channel": "#general",
+        "text": "{{$json['choices'][0]['text']}}",
+        "authentication": "accessToken",
+        "resource": "message",
+        "operation": "post",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "meta": {
+    "instanceId": "text-to-workflow-generated"
+  },
+  "tags": [
+    "text-to-workflow"
+  ],
+  "requiredCredentials": [
+    "openAiApi",
+    "slackApi"
+  ],
+  "versionId": "b5f92c40-9bf0-4a73-b358-93b88d6cafc3",
+  "id": "jisw702osf"
+}

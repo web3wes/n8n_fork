@@ -1,0 +1,193 @@
+{
+  "name": "Request Complexity Routing Workflow",
+  "active": false,
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "path": "request-complexity",
+        "method": "POST",
+        "responseMode": "responseNode",
+        "httpMethod": "GET",
+        "options": {}
+      }
+    },
+    {
+      "id": "2",
+      "name": "OpenAI",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        400,
+        300
+      ],
+      "parameters": {
+        "model": "text-davinci-003",
+        "prompt": "Analyze the complexity of the following request: {{$json['body']}}",
+        "maxTokens": 50,
+        "resource": "text",
+        "operation": "complete",
+        "options": {}
+      }
+    },
+    {
+      "id": "3",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        600,
+        300
+      ],
+      "parameters": {
+        "propertyName": "complexity",
+        "rules": {
+          "rules": [
+            {
+              "operation": "equal",
+              "value2": "simple",
+              "outputKey": "Output 1"
+            },
+            {
+              "operation": "equal",
+              "value2": "moderate",
+              "outputKey": "Output 2"
+            },
+            {
+              "operation": "equal",
+              "value2": "complex",
+              "outputKey": "Output 3"
+            }
+          ]
+        },
+        "mode": "rules",
+        "dataType": "string",
+        "value1": "={{ $json.complexity }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "4",
+      "name": "Email Send - Simple",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        800,
+        200
+      ],
+      "parameters": {
+        "to": "simple@example.com",
+        "subject": "Simple Request",
+        "text": "A simple request has been received.",
+        "fromEmail": "support@example.com",
+        "toEmail": "",
+        "options": {}
+      }
+    },
+    {
+      "id": "5",
+      "name": "Email Send - Moderate",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        800,
+        300
+      ],
+      "parameters": {
+        "to": "moderate@example.com",
+        "subject": "Moderate Request",
+        "text": "A moderate request has been received.",
+        "fromEmail": "support@example.com",
+        "toEmail": "",
+        "options": {}
+      }
+    },
+    {
+      "id": "6",
+      "name": "Email Send - Complex",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        800,
+        400
+      ],
+      "parameters": {
+        "to": "complex@example.com",
+        "subject": "Complex Request",
+        "text": "A complex request has been received.",
+        "fromEmail": "support@example.com",
+        "toEmail": "",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Email Send - Simple",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Email Send - Moderate",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Email Send - Complex",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "meta": {
+    "instanceId": "text-to-workflow-generated"
+  },
+  "tags": [
+    "text-to-workflow"
+  ],
+  "requiredCredentials": [
+    "openAiApi",
+    "email"
+  ],
+  "versionId": "2d7ff17f-c934-4986-86e7-68051cf7de7b",
+  "id": "ec1w9d1r8t"
+}

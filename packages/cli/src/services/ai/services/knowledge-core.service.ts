@@ -52,18 +52,29 @@ interface NodeDocument {
 export class KnowledgeCoreService {
 	private nodeVectorStore: PineconeStore | null = null;
 	private lastSync: Date | null = null;
+	private nodeCount: number = 0;
 	private syncInterval: number = 1000 * 60 * 60; // 1 hour
 	private n8nBaseUrl: string;
+	private cachedNodeDefinitions: N8nNodeDefinition[] | null = null;
+	private cacheTimestamp: number = 0;
+	private cacheValidityMs: number = 1000 * 60 * 10; // 10 minutes
 
 	constructor(
 		private pinecone: Pinecone,
 		private aiProvider: AIProviderOpenAI,
 	) {
-		// Initialize configuration
 		this.n8nBaseUrl = 'http://localhost:5678'; // Default n8n base URL
+		console.log('🔧 Knowledge Core initialized with base URL:', this.n8nBaseUrl);
 
-		// Initialize sync on startup
-		void this.initializeKnowledgeCore();
+		// Don't auto-initialize on construction - wait for manual trigger
+		// void this.initializeKnowledgeCore();
+	}
+
+	/**
+	 * Manually initialize the Knowledge Core (for delayed initialization)
+	 */
+	async initialize(): Promise<void> {
+		return this.initializeKnowledgeCore();
 	}
 
 	async initializeKnowledgeCore(): Promise<void> {
@@ -87,24 +98,37 @@ export class KnowledgeCoreService {
 	 */
 	async syncNodeDefinitions(): Promise<void> {
 		try {
-			console.log('🔄 Syncing node definitions from n8n instance...');
+			console.log('🚀 Starting Knowledge Core sync...');
 
-			// Fetch latest node definitions
+			// Fetch fresh node definitions from n8n
 			const nodeDefinitions = await this.fetchNodeDefinitions();
+			console.log(`📥 Fetched ${nodeDefinitions.length} node definitions from n8n`);
 
-			// Create rich documents for each node
+			// Create semantic documents for vector search
 			const nodeDocuments = await this.createNodeDocuments(nodeDefinitions);
+			console.log(`📝 Created ${nodeDocuments.length} semantic documents`);
 
 			// Update vector database
 			await this.updateVectorDatabase(nodeDocuments);
 
+			this.nodeCount = nodeDefinitions.length;
 			this.lastSync = new Date();
+
+			// Invalidate cache to ensure fresh data on next getNodeDetails call
+			this.cachedNodeDefinitions = null;
+			this.cacheTimestamp = 0;
+
 			console.log(
 				`✅ Knowledge Core synced successfully. ${nodeDefinitions.length} nodes indexed.`,
 			);
 		} catch (error) {
 			console.error('❌ Failed to sync node definitions:', error);
-			throw new ApplicationError('Failed to sync node definitions from n8n instance');
+			console.error('❌ Sync error details:', {
+				name: error.name,
+				message: error.message,
+				stack: error.stack?.split('\n').slice(0, 5).join('\n'),
+			});
+			throw new ApplicationError(`Failed to sync node definitions: ${error.message}`);
 		}
 	}
 
@@ -113,22 +137,41 @@ export class KnowledgeCoreService {
 	 */
 	private async fetchNodeDefinitions(): Promise<N8nNodeDefinition[]> {
 		try {
+			console.log(`🌐 Fetching node definitions from: ${this.n8nBaseUrl}/types/nodes.json`);
+
 			const response = await axios.get(`${this.n8nBaseUrl}/types/nodes.json`, {
 				timeout: 30000,
+				headers: {
+					Accept: 'application/json',
+					'User-Agent': 'n8n-knowledge-core',
+				},
 			});
 
-			if (!response.data || typeof response.data !== 'object') {
-				throw new Error('Invalid response format from /types/nodes.json');
+			console.log(`📡 Response status: ${response.status}`);
+			console.log(`📊 Response data type: ${typeof response.data}`);
+
+			if (!response.data || !Array.isArray(response.data)) {
+				throw new Error('Invalid response format from /types/nodes.json - expected array');
 			}
 
-			// The response is an object where keys are node names and values are definitions
-			const nodeDefinitions: N8nNodeDefinition[] = Object.values(response.data);
+			// The response is an array of node definitions
+			const nodeDefinitions: N8nNodeDefinition[] = response.data;
 
-			console.log(`📊 Fetched ${nodeDefinitions.length} node definitions`);
+			console.log(`✅ Fetched ${nodeDefinitions.length} node definitions`);
 			return nodeDefinitions;
 		} catch (error) {
+			console.error('❌ Error details:', {
+				message: error.message,
+				code: error.code,
+				status: error.response?.status,
+				statusText: error.response?.statusText,
+				url: `${this.n8nBaseUrl}/types/nodes.json`,
+			});
+
 			if (axios.isAxiosError(error)) {
-				throw new Error(`Failed to fetch node definitions: ${error.message}`);
+				throw new Error(
+					`Failed to fetch node definitions: ${error.message} (Status: ${error.response?.status})`,
+				);
 			}
 			throw error;
 		}
@@ -305,7 +348,12 @@ export class KnowledgeCoreService {
 		}
 
 		try {
-			const index = this.pinecone.Index('n8n-nodes');
+			const indexName = 'n8n-nodes';
+
+			// Check if index exists, create if it doesn't
+			await this.ensureIndexExists(indexName);
+
+			const index = this.pinecone.Index(indexName);
 
 			// Create documents for vector store
 			const documents: Document[] = nodeDocuments.map((doc) => ({
@@ -334,6 +382,93 @@ export class KnowledgeCoreService {
 			console.error('Failed to update vector database:', error);
 			throw new ApplicationError('Failed to update node vector database');
 		}
+	}
+
+	/**
+	 * Ensures the Pinecone index exists, creates it if it doesn't
+	 */
+	private async ensureIndexExists(indexName: string): Promise<void> {
+		try {
+			console.log(`🔍 Checking if Pinecone index '${indexName}' exists...`);
+
+			// Check if index exists
+			const indexList = await this.pinecone.listIndexes();
+			console.log(
+				`📊 Found ${indexList.indexes?.length || 0} existing indexes:`,
+				indexList.indexes?.map((idx) => idx.name) || [],
+			);
+
+			const indexExists = indexList.indexes?.some((index) => index.name === indexName);
+
+			if (!indexExists) {
+				console.log(`📝 Creating Pinecone index: ${indexName}`);
+				console.log('🔧 Index configuration:', {
+					name: indexName,
+					dimension: 1536,
+					metric: 'cosine',
+					spec: {
+						serverless: {
+							cloud: 'aws',
+							region: 'us-east-1',
+						},
+					},
+				});
+
+				// Create index with appropriate dimensions for OpenAI embeddings
+				const createResult = await this.pinecone.createIndex({
+					name: indexName,
+					dimension: 1536, // OpenAI ada-002 embedding dimension
+					metric: 'cosine',
+					spec: {
+						serverless: {
+							cloud: 'aws',
+							region: 'us-east-1',
+						},
+					},
+				});
+
+				console.log('📝 Index creation initiated:', createResult);
+
+				// Wait for index to be ready
+				console.log('⏳ Waiting for index to be ready...');
+				await this.waitForIndexReady(indexName);
+				console.log(`✅ Index ${indexName} created and ready`);
+			} else {
+				console.log(`✅ Index ${indexName} already exists`);
+			}
+		} catch (error) {
+			console.error('❌ Failed to ensure index exists:', error);
+			console.error('❌ Error details:', {
+				name: error.name,
+				message: error.message,
+				stack: error.stack?.split('\n').slice(0, 5).join('\n'),
+			});
+			throw new ApplicationError(`Failed to create or verify Pinecone index: ${error.message}`);
+		}
+	}
+
+	/**
+	 * Waits for a Pinecone index to be ready
+	 */
+	private async waitForIndexReady(indexName: string, maxWaitTime: number = 60000): Promise<void> {
+		const startTime = Date.now();
+
+		while (Date.now() - startTime < maxWaitTime) {
+			try {
+				const indexStats = await this.pinecone.Index(indexName).describeIndexStats();
+				if (indexStats) {
+					console.log(`✅ Index ${indexName} is ready`);
+					return;
+				}
+			} catch (error) {
+				// Index might not be ready yet, continue waiting
+			}
+
+			// Wait 2 seconds before checking again
+			await new Promise((resolve) => setTimeout(resolve, 2000));
+		}
+
+		throw new Error(`Index ${indexName} did not become ready within ${maxWaitTime}ms`);
 	}
 
 	/**
@@ -368,12 +503,22 @@ export class KnowledgeCoreService {
 	}
 
 	/**
-	 * Gets detailed node information by node type
+	 * Gets detailed node information by node type (with caching)
 	 */
 	async getNodeDetails(nodeType: string): Promise<N8nNodeDefinition | null> {
 		try {
-			const nodeDefinitions = await this.fetchNodeDefinitions();
-			return nodeDefinitions.find((node) => node.name === nodeType) || null;
+			// Check if cache is valid
+			const now = Date.now();
+			if (!this.cachedNodeDefinitions || now - this.cacheTimestamp > this.cacheValidityMs) {
+				console.log('🔄 Cache miss or expired, fetching node definitions...');
+				this.cachedNodeDefinitions = await this.fetchNodeDefinitions();
+				this.cacheTimestamp = now;
+				console.log(`📚 Cached ${this.cachedNodeDefinitions.length} node definitions`);
+			} else {
+				console.log('✅ Using cached node definitions');
+			}
+
+			return this.cachedNodeDefinitions.find((node) => node.name === nodeType) || null;
 		} catch (error) {
 			console.error(`Failed to get details for node ${nodeType}:`, error);
 			return null;
@@ -391,7 +536,7 @@ export class KnowledgeCoreService {
 		return {
 			lastSync: this.lastSync,
 			isInitialized: this.nodeVectorStore !== null,
-			nodeCount: 0, // Could be enhanced to track actual count
+			nodeCount: this.nodeCount,
 		};
 	}
 

@@ -1,0 +1,174 @@
+{
+  "name": "Customer Support Workflow with Sentiment Analysis and AI Auto-Response",
+  "active": false,
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Read Customer Emails",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "host": "imap.example.com",
+        "port": 993,
+        "secure": true,
+        "user": "support@example.com",
+        "password": "password",
+        "mailbox": "INBOX",
+        "fetchUnread": true,
+        "options": {}
+      }
+    },
+    {
+      "id": "2",
+      "name": "Analyze Sentiment",
+      "type": "n8n-nodes-base.sentimentAnalysis",
+      "typeVersion": 1,
+      "position": [
+        400,
+        300
+      ],
+      "parameters": {
+        "text": "={{$json[\"text\"]}}",
+        "options": {}
+      }
+    },
+    {
+      "id": "3",
+      "name": "Check Sentiment",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        600,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json[\"sentiment\"]}}",
+              "value2": "negative"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "4",
+      "name": "Generate AI Response",
+      "type": "n8n-nodes-base.aiTextGenerator",
+      "typeVersion": 1,
+      "position": [
+        800,
+        200
+      ],
+      "parameters": {
+        "prompt": "Generate a polite and helpful response to a negative customer email: {{$json[\"text\"]}}",
+        "options": {}
+      }
+    },
+    {
+      "id": "5",
+      "name": "Send AI Response",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        200
+      ],
+      "parameters": {
+        "fromEmail": "support@example.com",
+        "toEmail": "={{$json[\"from\"]}}",
+        "subject": "Re: {{$json[\"subject\"]}}",
+        "text": "={{$json[\"text\"]}}",
+        "options": {}
+      }
+    },
+    {
+      "id": "6",
+      "name": "Notify Customer Support",
+      "type": "n8n-nodes-base.customerMessenger",
+      "typeVersion": 1,
+      "position": [
+        800,
+        400
+      ],
+      "parameters": {
+        "message": "A negative sentiment email was received from {{$json[\"from\"]}}. Please review and follow up.",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Read Customer Emails": {
+      "main": [
+        [
+          {
+            "node": "Analyze Sentiment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Sentiment": {
+      "main": [
+        [
+          {
+            "node": "Check Sentiment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Sentiment": {
+      "main": [
+        [
+          {
+            "node": "Generate AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify Customer Support",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate AI Response": {
+      "main": [
+        [
+          {
+            "node": "Send AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "meta": {
+    "instanceId": "text-to-workflow-generated"
+  },
+  "tags": [
+    "text-to-workflow"
+  ],
+  "requiredCredentials": [
+    "emailImap",
+    "emailSmtp",
+    "sentimentAnalysisApi",
+    "aiTextGeneratorApi"
+  ],
+  "versionId": "4a8adcfd-d3f1-47fe-8aae-f00dc707f573",
+  "id": "6qqnwkok9k7"
+}

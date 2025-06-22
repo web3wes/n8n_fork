@@ -1,0 +1,14 @@
+
+> n8n-monorepo@1.47.0 start /Users/wes/Downloads/n8n
+> run-script-os
+
+
+> n8n-monorepo@1.47.0 start:default
+> cd packages/cli/bin && ./n8n
+
+User settings loaded from: /Users/wes/.n8n/config
+(node:58008) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Initializing n8n process
+n8n's port 5678 is already in use. Do you have another instance of n8n running already?
+ ELIFECYCLE  Command failed with exit code 1.

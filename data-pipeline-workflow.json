@@ -1,0 +1,161 @@
+{
+  "name": "Google Sheets to Airtable Data Pipeline with OpenAI Enrichment",
+  "active": false,
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Google Sheets Trigger",
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "sheetId": "your_google_sheet_id",
+        "range": "Sheet1!A1:Z1000",
+        "options": {}
+      }
+    },
+    {
+      "id": "2",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 1,
+      "position": [
+        400,
+        300
+      ],
+      "parameters": {
+        "operation": "getRows",
+        "sheetId": "your_google_sheet_id",
+        "range": "Sheet1!A1:Z1000",
+        "authentication": "serviceAccount",
+        "resource": "sheet",
+        "options": {}
+      }
+    },
+    {
+      "id": "3",
+      "name": "OpenAI",
+      "type": "n8n-nodes-base.openai",
+      "typeVersion": 1,
+      "position": [
+        600,
+        300
+      ],
+      "parameters": {
+        "model": "text-davinci-003",
+        "prompt": "Enrich the following data: {{$json[\"data\"]}}",
+        "maxTokens": 150,
+        "options": {}
+      }
+    },
+    {
+      "id": "4",
+      "name": "Function",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        800,
+        300
+      ],
+      "parameters": {
+        "functionCode": "return items.map(item => ({ json: { enrichedData: item.json.choices[0].text.trim() } }));",
+        "options": {}
+      }
+    },
+    {
+      "id": "5",
+      "name": "Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        300
+      ],
+      "parameters": {
+        "operation": "create",
+        "baseId": "your_airtable_base_id",
+        "tableId": "your_airtable_table_id",
+        "fields": {
+          "Enriched Data": "={{$json[\"enrichedData\"]}}"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "6",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        300
+      ],
+      "parameters": {
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Function",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Function": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "meta": {
+    "instanceId": "text-to-workflow-generated"
+  },
+  "tags": [
+    "text-to-workflow"
+  ],
+  "requiredCredentials": [
+    "googleSheetsOAuth2Api",
+    "openAIApi",
+    "airtableApi"
+  ],
+  "versionId": "60ee5d6c-18bd-4689-b29e-266299d68816",
+  "id": "2z1tj26rltf"
+}

@@ -1,0 +1,221 @@
+{
+  "name": "Customer Support Workflow with Sentiment Analysis and AI Responses",
+  "active": false,
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Email Trigger",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "host": "imap.example.com",
+        "port": 993,
+        "secure": true,
+        "user": "support@example.com",
+        "password": "password",
+        "mailbox": "INBOX",
+        "fetchUnread": true,
+        "options": {}
+      }
+    },
+    {
+      "id": "2",
+      "name": "Sentiment Analysis",
+      "type": "n8n-nodes-base.openai",
+      "typeVersion": 1,
+      "position": [
+        400,
+        300
+      ],
+      "parameters": {
+        "model": "text-davinci-003",
+        "prompt": "Analyze the sentiment of this email: {{$json[\"text\"]}}",
+        "maxTokens": 60,
+        "resource": "text",
+        "operation": "complete",
+        "options": {}
+      }
+    },
+    {
+      "id": "3",
+      "name": "Sentiment Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        600,
+        300
+      ],
+      "parameters": {
+        "property": "data[\"choices\"][0][\"text\"]",
+        "rules": {
+          "rules": [
+            {
+              "operation": "contains",
+              "value2": "positive",
+              "output": 0
+            },
+            {
+              "operation": "contains",
+              "value2": "negative",
+              "output": 1
+            }
+          ]
+        },
+        "mode": "rules",
+        "dataType": "string",
+        "value1": "={{ $json.complexity }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "4",
+      "name": "AI Positive Response",
+      "type": "n8n-nodes-base.openai",
+      "typeVersion": 1,
+      "position": [
+        800,
+        200
+      ],
+      "parameters": {
+        "model": "text-davinci-003",
+        "prompt": "Generate a positive response to this email: {{$json[\"text\"]}}",
+        "maxTokens": 150,
+        "resource": "text",
+        "operation": "complete",
+        "options": {}
+      }
+    },
+    {
+      "id": "5",
+      "name": "AI Negative Response",
+      "type": "n8n-nodes-base.openai",
+      "typeVersion": 1,
+      "position": [
+        800,
+        400
+      ],
+      "parameters": {
+        "model": "text-davinci-003",
+        "prompt": "Generate a helpful response to address the concerns in this email: {{$json[\"text\"]}}",
+        "maxTokens": 150,
+        "resource": "text",
+        "operation": "complete",
+        "options": {}
+      }
+    },
+    {
+      "id": "6",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        300
+      ],
+      "parameters": {
+        "fromEmail": "support@example.com",
+        "toEmail": "{{$json[\"from\"]}}",
+        "subject": "Re: {{$json[\"subject\"]}}",
+        "text": "{{$json[\"choices\"][0][\"text\"]}}",
+        "options": {}
+      }
+    },
+    {
+      "id": "7",
+      "name": "Customer.io Trigger",
+      "type": "n8n-nodes-base.customerIoTrigger",
+      "typeVersion": 1,
+      "position": [
+        200,
+        100
+      ],
+      "parameters": {
+        "eventName": "support_request",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "1": {
+      "main": [
+        [
+          {
+            "node": "2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2": {
+      "main": [
+        [
+          {
+            "node": "3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3": {
+      "main": [
+        [
+          {
+            "node": "4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "5",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "4": {
+      "main": [
+        [
+          {
+            "node": "6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "5": {
+      "main": [
+        [
+          {
+            "node": "6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "meta": {
+    "instanceId": "text-to-workflow-generated"
+  },
+  "tags": [
+    "text-to-workflow"
+  ],
+  "requiredCredentials": [
+    "emailImap",
+    "openAiApi",
+    "emailSend",
+    "customerIoApi"
+  ],
+  "versionId": "ad1f0741-9e75-47a7-9670-cf1fe8b61908",
+  "id": "nmq3rg9klmj"
+}
